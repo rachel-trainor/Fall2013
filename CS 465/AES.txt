@@ -1,0 +1,30 @@
+function MixColumns(state)
+	// state = byte[4][4]
+	
+	/* byte[4][4]
+	02 03 01 01
+	01 02 03 01
+	01 01 02 03
+	03 01 01 02
+	*/
+	constant a
+
+	// byte[4][4]
+	result
+
+	for each column y in state
+		for each row x in state
+			result[x,y] = (FFmultiply(state[0][y],a[x][0])) XOR 
+						  (FFmultiply(state[1][y],a[x][1])) XOR 
+						  (FFmultiply(state[2][y],a[x][2])) XOR 
+						  (FFmultiply(state[3][y]*a[x][3]))
+
+	return result
+
+function FFmultiply(byte a, byte b)
+	short temp
+	for each bit in a
+		if bit == 1
+			temp = temp XOR (b << index_of_bit)
+	temp = temp % 0x11B
+	return first 8 bits of temp as a byte
