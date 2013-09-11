@@ -1,0 +1,29 @@
+Imagine this: you go to the big game - BYU vs. Utah. The first quarter is exciting, but you get a bit hungry. Without wanting to miss any of the action, you decide to rush to concession in between quarters. You get stuck in line for what seems like ages, and the second quarter starts. You hear a roar from the crowd and you hear over the loudspeaker that Taysom Hill just busted a 70 yard run to put us in the lead. But you missed it, all because you wanted that $3.95 churro.
+
+Wouldn't it be better if you could order that churro from the luxury of your seat. We all have smartphones, so why not use them? I want to design an app that allows fans to order and pay for concessions through their phone and have their food delivered directly to their seat. That way they don't miss any of the action.
+
+This app will help concession vendors increase business by reducing lines, but increasing orders.
+The app will let fans get their favorite foods without missing their favorite players.
+
+
+
+
+
+Monetization:
+
+Free for customer and vendor: add-supported app
+Cost to vendors             : Take a percentage of the profit earned on each transaction (Ex: 1% on all transactions)
+Cost to custom              : Charge a delivery fee (Ex: $1 per $5 worth of food)
+
+Seat input: Scan ticket bar code
+
+Alcohol sales: Have them somehow verify age on app before purchasing
+
+Sources:
+
+http://www.reuters.com/article/2009/02/10/us-concessions-idUSTRE51982K20090210
+The U.S. sports concession market -- with its $7 beers and $4 hot dogs -- generates about $5 billion to $10 billion in annual revenue, according to industry executives.
+
+http://www.centralpennbusiness.com/article/20121107/SPORTS/121109844&source=RSS
+University of Louisville athletic department. In 2010, the university received $785,000 in revenue from its seven home football games.
+West Virginia University recently started selling beer at its home football games and raked in $520,000 in beer alone in just the first year.
