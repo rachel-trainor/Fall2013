@@ -6,25 +6,27 @@ import (
 	"strings"
 )
 
-var debug = true
-
 func Printer() {
-	InputState := makeState(TEST1)
-	printBlock("INPUT:", *InputState)
+	fmt.Println("INPUT:")
+	lines := strings.Split(hex.EncodeToString(TEST1), "\n")
+	SpecialPrint(lines[0])
 	fmt.Printf("KEY: %+v\n", keytouse)
 	encrypted, err := Cipher(TEST1, make(KeySchedule, Nb*(Nr+1)), keytouse)
 	if err != nil {
 		fmt.Printf("Error encrypting: %s\n", err)
 	}
-	EncryptedState := makeState(*encrypted)
-	printBlock("ENCRYPTED:", *EncryptedState)
+	fmt.Println("ENCRYPTED:")
+	lines = strings.Split(hex.EncodeToString(*encrypted), "\n")
+	SpecialPrint(lines[0])
 
 	decrypted, err2 := InvCipher(*encrypted, make(KeySchedule, Nb*(Nr+1)), keytouse)
 	if err2 != nil {
 		fmt.Printf("Error decrypting: %s\n", err2)
 	}
-	DecryptedState := makeState(*decrypted)
-	printBlock("DECRYPTED:", *DecryptedState)
+	fmt.Println("DECRYPTED:")
+	lines = strings.Split(hex.EncodeToString(*decrypted), "\n")
+	SpecialPrint(lines[0])
+
 }
 
 func printBlock(label string, state State) {

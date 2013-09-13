@@ -9,12 +9,14 @@ var state State
 var Nb = 4
 var bits, Nr, Nk int
 var keytouse []byte
+var debug bool
 
 type State [4][4]byte
 type KeySchedule [][4]byte
 
 func init() {
 	flag.IntVar(&bits, "bits", 128, "128, 192, or 256")
+	flag.BoolVar(&debug, "debug", false, "true will print debug lines")
 	flag.Parse()
 	switch bits {
 	case 128:
@@ -46,18 +48,24 @@ func Cipher(in []byte, schedule KeySchedule, key []byte) (*[]byte, error) {
 		return nil, fmt.Errorf("Error with KeyExpansion: %s", err)
 	}
 	state := makeState(in)
+	printBlock("Original state", *state)
 
 	nextKey := [4][4]byte{schedule[0], schedule[1], schedule[2], schedule[3]}
 	state.AddRoundKey(nextKey)
+	printBlock("After initial AddRoundKey", *state)
 
 	for round := 1; round <= Nr; round++ {
 		state.SubBytes()
+		printBlock(fmt.Sprintf("Round %d: after SubBytes", round), *state)
 		state.ShiftRows()
+		printBlock(fmt.Sprintf("Round %d: after ShiftRows", round), *state)
 		if round != Nr {
 			state.MixColumns()
+			printBlock(fmt.Sprintf("Round %d: after MixColumns", round), *state)
 		}
 		nextKey = [4][4]byte{schedule[round*Nb], schedule[round*Nb+1], schedule[round*Nb+2], schedule[round*Nb+3]}
 		state.AddRoundKey(nextKey)
+		printBlock(fmt.Sprintf("Round %d: after AddRoundKey", round), *state)
 	}
 
 	out := state.ToArray()
@@ -181,18 +189,24 @@ func InvCipher(in []byte, schedule KeySchedule, key []byte) (*[]byte, error) {
 	}
 	schedule.KeyExpansion(key)
 	state := makeState(in)
+	printBlock("Original state", *state)
 
 	// start the key at the end of the schedule and work barckwards
 	nextKey := [4][4]byte{schedule[Nr*Nb], schedule[Nr*Nb+1], schedule[Nr*Nb+2], schedule[Nr*Nb+3]}
 	state.AddRoundKey(nextKey)
+	printBlock("After initial AddRoundKey", *state)
 
 	for round := Nr - 1; round >= 0; round-- {
 		state.InvShiftRows()
+		printBlock(fmt.Sprintf("Round %d: after InvShiftRows", round), *state)
 		state.InvSubBytes()
+		printBlock(fmt.Sprintf("Round %d: after InvSubBytes", round), *state)
 		nextKey := [4][4]byte{schedule[round*Nb], schedule[round*Nb+1], schedule[round*Nb+2], schedule[round*Nb+3]}
 		state.AddRoundKey(nextKey)
+		printBlock(fmt.Sprintf("Round %d: after AddRoundKey", round), *state)
 		if round != 0 {
 			state.InvMixColumns()
+			printBlock(fmt.Sprintf("Round %d: after InvMixColumns", round), *state)
 		}
 	}
 
