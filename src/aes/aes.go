@@ -8,6 +8,7 @@ import (
 var state State
 var Nb = 4
 var bits, Nr, Nk int
+var keytouse []byte
 
 type State [4][4]byte
 type KeySchedule [][4]byte
@@ -19,25 +20,28 @@ func init() {
 	case 128:
 		Nk = 4
 		Nr = 10
+		keytouse = KEY_128
 		return
 	case 192:
 		Nk = 6
 		Nr = 12
+		keytouse = KEY_192
 		return
 	case 256:
 		Nk = 8
 		Nr = 14
+		keytouse = KEY_256
 		return
 	}
 }
 
-func Cipher(in []byte, schedule KeySchedule) (*[]byte, error) {
+func Cipher(in []byte, schedule KeySchedule, key []byte) (*[]byte, error) {
 	if len(in) != 4*Nb {
 		return nil, fmt.Errorf("input has incorrect length")
 	} else if len(schedule) != Nb*(Nr+1) {
 		return nil, fmt.Errorf("schedule has incorrect length")
 	}
-	schedule.KeyExpansion(KEY)
+	schedule.KeyExpansion(key)
 	state := makeState(in)
 
 	nextKey := [4][4]byte{schedule[0], schedule[1], schedule[2], schedule[3]}
@@ -90,16 +94,14 @@ func (schedule *KeySchedule) KeyExpansion(key []byte) error {
 		temp = (*schedule)[i-1]
 		if i%Nk == 0 {
 			temp = SubWord(RotWord(temp))
-			temp[0] = temp[0] ^ Recon[(i/Nk)-1][0]
+			temp[0] = temp[0] ^ Recon[(i/Nk)-1]
 		} else if Nk > 6 && i%Nk == 4 {
 			temp = SubWord(temp)
 		}
-		var temp2 [4]byte
-		temp2[0] = temp[0] ^ (*schedule)[i-Nk][0]
-		temp2[1] = temp[1] ^ (*schedule)[i-Nk][1]
-		temp2[2] = temp[2] ^ (*schedule)[i-Nk][2]
-		temp2[3] = temp[3] ^ (*schedule)[i-Nk][3]
-		(*schedule)[i] = temp2
+		(*schedule)[i][0] = temp[0] ^ (*schedule)[i-Nk][0]
+		(*schedule)[i][1] = temp[1] ^ (*schedule)[i-Nk][1]
+		(*schedule)[i][2] = temp[2] ^ (*schedule)[i-Nk][2]
+		(*schedule)[i][3] = temp[3] ^ (*schedule)[i-Nk][3]
 		i = i + 1
 	}
 	return nil
