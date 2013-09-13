@@ -41,7 +41,10 @@ func Cipher(in []byte, schedule KeySchedule, key []byte) (*[]byte, error) {
 	} else if len(schedule) != Nb*(Nr+1) {
 		return nil, fmt.Errorf("schedule has incorrect length")
 	}
-	schedule.KeyExpansion(key)
+	err := schedule.KeyExpansion(key)
+	if err != nil {
+		return nil, fmt.Errorf("Error with KeyExpansion: %s", err)
+	}
 	state := makeState(in)
 
 	nextKey := [4][4]byte{schedule[0], schedule[1], schedule[2], schedule[3]}
@@ -79,7 +82,7 @@ func (state *State) AddRoundKey(roundKeyValue [4][4]byte) {
 
 func (schedule *KeySchedule) KeyExpansion(key []byte) error {
 	if len(key) != 4*Nk {
-		return fmt.Errorf("key has incorrect length")
+		return fmt.Errorf("key has incorrect length. Expected: %d, Actual: %d", 4*Nk, len(key))
 	} else if len(*schedule) != Nb*(Nr+1) {
 		return fmt.Errorf("schedule has incorrect length")
 	}
@@ -94,7 +97,7 @@ func (schedule *KeySchedule) KeyExpansion(key []byte) error {
 		temp = (*schedule)[i-1]
 		if i%Nk == 0 {
 			temp = SubWord(RotWord(temp))
-			temp[0] = temp[0] ^ Recon[(i/Nk)-1]
+			temp[0] = temp[0] ^ Recon[(i/Nk)]
 		} else if Nk > 6 && i%Nk == 4 {
 			temp = SubWord(temp)
 		}
@@ -168,4 +171,65 @@ func ffMult(a, b byte) byte {
 		aa = aa >> 1
 	}
 	return result
+}
+
+func InvCipher(in []byte, schedule KeySchedule, key []byte) (*[]byte, error) {
+	if len(in) != 4*Nb {
+		return nil, fmt.Errorf("input has incorrect length")
+	} else if len(schedule) != Nb*(Nr+1) {
+		return nil, fmt.Errorf("schedule has incorrect length")
+	}
+	schedule.KeyExpansion(key)
+	state := makeState(in)
+
+	// start the key at the end of the schedule and work barckwards
+	nextKey := [4][4]byte{schedule[Nr*Nb], schedule[Nr*Nb+1], schedule[Nr*Nb+2], schedule[Nr*Nb+3]}
+	state.AddRoundKey(nextKey)
+
+	for round := Nr - 1; round >= 0; round-- {
+		state.InvShiftRows()
+		state.InvSubBytes()
+		nextKey := [4][4]byte{schedule[round*Nb], schedule[round*Nb+1], schedule[round*Nb+2], schedule[round*Nb+3]}
+		state.AddRoundKey(nextKey)
+		if round != 0 {
+			state.InvMixColumns()
+		}
+	}
+
+	out := state.ToArray()
+	return out, nil
+}
+
+func (state *State) InvSubBytes() {
+	for i := 0; i < Nb; i++ {
+		for j := 0; j < Nb; j++ {
+			(*state)[i][j] = INVSBOX[(*state)[i][j]]
+		}
+	}
+}
+
+func (state *State) InvShiftRows() {
+	for row := 0; row < Nb; row++ {
+		for i := 0; i < row; i++ {
+			temp := (*state)[row][3]
+			(*state)[row][3] = (*state)[row][2]
+			(*state)[row][2] = (*state)[row][1]
+			(*state)[row][1] = (*state)[row][0]
+			(*state)[row][0] = temp
+		}
+	}
+}
+
+func (state *State) InvMixColumns() {
+	result := &State{{0x00, 0x00, 0x00, 0x00}, {0x00, 0x00, 0x00, 0x00}, {0x00, 0x00, 0x00, 0x00}, {0x00, 0x00, 0x00, 0x00}}
+
+	for y := 0; y < Nb; y++ {
+		for x := 0; x < Nb; x++ {
+			(*result)[x][y] = (ffMult((*state)[0][y], Inva[x][0])) ^
+				(ffMult((*state)[1][y], Inva[x][1])) ^
+				(ffMult((*state)[2][y], Inva[x][2])) ^
+				(ffMult((*state)[3][y], Inva[x][3]))
+		}
+	}
+	*state = *result
 }

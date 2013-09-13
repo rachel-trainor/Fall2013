@@ -44,49 +44,68 @@ func TestKeyExpansion(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	if debug {
-		fmt.Println("Original")
-		lines := strings.Split(hex.EncodeToString(*testState.ToArray()), "\n")
-		SpecialPrint(lines[0])
-	}
+	printBlock("Original", *testState)
+
 	schedule := make(KeySchedule, Nb*(Nr+1))
 	schedule.KeyExpansion(KEY_128)
 	nextKey := [4][4]byte{schedule[0], schedule[1], schedule[2], schedule[3]}
 	testState.AddRoundKey(nextKey)
-	if debug {
-		fmt.Println("After first AddRoundKey")
-		lines := strings.Split(hex.EncodeToString(*testState.ToArray()), "\n")
-		SpecialPrint(lines[0])
-	}
+	printBlock("After first AddRoundKey", *testState)
 
 	testState.SubBytes()
-	if debug {
-		fmt.Println("After SubBytes")
-		lines := strings.Split(hex.EncodeToString(*testState.ToArray()), "\n")
-		SpecialPrint(lines[0])
-	}
+	printBlock("After SubBytes", *testState)
 
 	testState.ShiftRows()
-	if debug {
-		fmt.Println("After ShiftRows")
-		lines := strings.Split(hex.EncodeToString(*testState.ToArray()), "\n")
-		SpecialPrint(lines[0])
-	}
+	printBlock("After ShiftRows", *testState)
 
 	testState.MixColumns()
-	if debug {
-		fmt.Println("After MixColumns")
-		lines := strings.Split(hex.EncodeToString(*testState.ToArray()), "\n")
-		SpecialPrint(lines[0])
-	}
+	printBlock("After MixColumns", *testState)
 
 	nextKey = [4][4]byte{schedule[4], schedule[5], schedule[6], schedule[7]}
 	testState.AddRoundKey(nextKey)
-	if debug {
-		fmt.Println("After AddRoundKey")
-		lines := strings.Split(hex.EncodeToString(*testState.ToArray()), "\n")
-		SpecialPrint(lines[0])
-	}
+	printBlock("After AddRoundKey", *testState)
+}
+
+func TestInvSubBytes(t *testing.T) {
+	actual := makeState(original)
+	tmpState := makeState(original)
+	printBlock("Original", *tmpState)
+
+	tmpState.SubBytes()
+	printBlock("After SubBytes", *tmpState)
+
+	tmpState.InvSubBytes()
+	printBlock("After InvSubBytes", *tmpState)
+
+	compareAllValues(t, *actual.ToArray(), *tmpState.ToArray())
+}
+
+func TestInvShiftRows(t *testing.T) {
+	actual := makeState(original)
+	tmpState := makeState(original)
+	printBlock("Original", *tmpState)
+
+	tmpState.ShiftRows()
+	printBlock("After ShiftRows", *tmpState)
+
+	tmpState.InvShiftRows()
+	printBlock("After InvShiftRows", *tmpState)
+
+	compareAllValues(t, *actual.ToArray(), *tmpState.ToArray())
+}
+
+func TestInvMixColumns(t *testing.T) {
+	actual := makeState(original)
+	tmpState := makeState(original)
+	printBlock("Original", *tmpState)
+
+	tmpState.MixColumns()
+	printBlock("After MixColumns", *tmpState)
+
+	tmpState.InvMixColumns()
+	printBlock("After InvMixColumns", *tmpState)
+
+	compareAllValues(t, *actual.ToArray(), *tmpState.ToArray())
 }
 
 func compareAllValues(t *testing.T, actual, generated []byte) {
