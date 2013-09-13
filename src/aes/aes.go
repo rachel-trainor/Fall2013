@@ -5,11 +5,12 @@ import (
 	"fmt"
 )
 
-var state [4][4]byte
+var state State
 var Nb = 4
 var bits, Nr, Nk int
 
-type State [][]byte
+type State [4][4]byte
+type KeySchedule [][4]byte
 
 func init() {
 	flag.IntVar(&bits, "bits", 128, "128, 192, or 256")
@@ -30,37 +31,27 @@ func init() {
 	}
 }
 
-func Printer() {
-	fmt.Printf("INPUT: %+v\n", INPUT)
-	fmt.Printf("KEY: %+v\n", KEY)
-	out, err := Cipher(INPUT, make([]int16, Nb*(Nr+1)))
-	if err != nil {
-		fmt.Printf("%s\n", err)
-	}
-	fmt.Printf("OUTPUT: %+v\n", *out)
-}
-
-func Cipher(in []byte, w []int16) (*[]byte, error) {
+func Cipher(in []byte, schedule KeySchedule) (*[]byte, error) {
 	if len(in) != 4*Nb {
 		return nil, fmt.Errorf("input has incorrect length")
-	} else if len(w) != Nb*(Nr+1) {
-		return nil, fmt.Errorf("word has incorrect length")
+	} else if len(schedule) != Nb*(Nr+1) {
+		return nil, fmt.Errorf("schedule has incorrect length")
 	}
-
+	schedule.KeyExpansion(KEY)
 	state := makeState(in)
 
-	state.AddRoundKey(w[0 : Nb-1])
+	nextKey := [4][4]byte{schedule[0], schedule[1], schedule[2], schedule[3]}
+	state.AddRoundKey(nextKey)
 
-	for round := 1; round < Nr; round++ {
+	for round := 1; round <= Nr; round++ {
 		state.SubBytes()
 		state.ShiftRows()
-		state.MixColumns()
-		state.AddRoundKey(w[round*Nb : (round+1)*Nb-1])
+		if round != Nr {
+			state.MixColumns()
+		}
+		nextKey = [4][4]byte{schedule[round*Nb], schedule[round*Nb+1], schedule[round*Nb+2], schedule[round*Nb+3]}
+		state.AddRoundKey(nextKey)
 	}
-
-	state.SubBytes()
-	state.ShiftRows()
-	state.AddRoundKey(w[Nr*Nb : (Nr+1)*Nb-1])
 
 	out := state.ToArray()
 	return out, nil
@@ -74,42 +65,54 @@ func makeState(in []byte) *State {
 	return newState
 }
 
-func (state *State) AddRoundKey(w []int16) {
-
+func (state *State) AddRoundKey(roundKeyValue [4][4]byte) {
+	for i := 0; i < Nb; i++ {
+		for j := 0; j < Nb; j++ {
+			(*state)[i][j] = (*state)[i][j] ^ roundKeyValue[j][i]
+		}
+	}
 }
 
-func KeyExpansion(key []byte, w []int16) {
+func (schedule *KeySchedule) KeyExpansion(key []byte) error {
 	if len(key) != 4*Nk {
-		return nil, fmt.Errorf("key has incorrect length")
-	} else if len(w) != Nb*(Nr+1) {
-		return nil, fmt.Errorf("w has incorrect length")
+		return fmt.Errorf("key has incorrect length")
+	} else if len(*schedule) != Nb*(Nr+1) {
+		return fmt.Errorf("schedule has incorrect length")
 	}
 
-	var temp int16
+	var temp [4]byte
 	i := 0
-	for i < Nk {
-		w[i] = word(key[4*i], key[4*i+1], key[4*i+2], key[4*i+3])
-		i = i + 1
+	for ; i < Nk; i++ {
+		(*schedule)[i] = [4]byte{key[4*i], key[4*i+1], key[4*i+2], key[4*i+3]}
 	}
 	i = Nk
 	for i < Nb*(Nr+1) {
-		temp = w[i-1]
+		temp = (*schedule)[i-1]
 		if i%Nk == 0 {
-			temp = SubWord(RotWord(temp)) ^ Rcon[i/Nk]
+			temp = SubWord(RotWord(temp))
+			temp[0] = temp[0] ^ Recon[(i/Nk)-1][0]
 		} else if Nk > 6 && i%Nk == 4 {
 			temp = SubWord(temp)
 		}
-		w[i] = w[i-Nk] ^ temp
+		var temp2 [4]byte
+		temp2[0] = temp[0] ^ (*schedule)[i-Nk][0]
+		temp2[1] = temp[1] ^ (*schedule)[i-Nk][1]
+		temp2[2] = temp[2] ^ (*schedule)[i-Nk][2]
+		temp2[3] = temp[3] ^ (*schedule)[i-Nk][3]
+		(*schedule)[i] = temp2
 		i = i + 1
 	}
+	return nil
 }
 
-func SubWord(input []byte) int16 {
-
+// takes a four-byte input word and applies the S-box to each of the four bytes to produce an output word
+func SubWord(input [4]byte) [4]byte {
+	return [4]byte{SBOX[input[0]], SBOX[input[1]], SBOX[input[2]], SBOX[input[3]]}
 }
 
-func RotWord() byte {
-
+// takes a word [a0,a1,a2,a3] as input, performs a cyclic permutation, and returns the word [a1,a2,a3,a0]
+func RotWord(input [4]byte) [4]byte {
+	return [4]byte{input[1], input[2], input[3], input[0]}
 }
 
 func (state *State) SubBytes() {
@@ -163,17 +166,4 @@ func ffMult(a, b byte) byte {
 		aa = aa >> 1
 	}
 	return result
-}
-
-func (state *State) ToArray() *[]byte {
-	out := make([]byte, 16)
-	count := 0
-	for i := 0; i < Nb; i++ {
-		for j := 0; j < Nb; j++ {
-			out[count] = (*state)[j][i]
-			count++
-		}
-	}
-	fmt.Println(state)
-	return &out
 }
