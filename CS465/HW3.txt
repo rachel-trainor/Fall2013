@@ -1,0 +1,36 @@
+Suppose two plaintext samples P and Q are encrypted using a block cipher with the same secret key K and the same initialization vector IV (or nonce) for those modes that require it. Suppose each plaintext sample is divided into 100 blocks (including padding). If the plaintext blocks differ only by 1 bit in block 10, compare the corresponding ciphertext for each block cipher mode
+ECB - All blocks except for block 10 are identical for P and Q. Each block is only encrypted with K.
+CBC - Blocks 1 - 9 are identical for P and Q. Blocks 10 - 100 differ.
+CTR - All blocks except for block 10 are identical for P and Q because the counters are consistent.
+CFB - Blocks 1 - 9 are identical for P and Q. Blocks 10 - 100 differ.
+OFB - Blocks 1 - 9 are identical for P and Q. Blocks 10 - 100 differ.
+
+Same as #1, except assume P and Q are encrypted with a different IV (nonce) as recommended by cryptographers.
+ECB - Doesn't use IV. Same answer as #1.
+CBC - The first blocks differ because the IVs differ. Each subsequent block is dependent on the block before it, so all blocks differ.
+CTR - All blocks differ because the nonce (which differs) is used for each block.
+CFB - The first blocks differ because the IVs differ. Each subsequent block is dependent on the block before it, so all blocks differ.
+OFB - The first blocks differ because the IVs differ. Each subsequent block is dependent on the block before it, so all blocks differ.
+
+Suppose two ciphertext samples P and Q are decrypted using key K and the same IV (or nonce) when required. Suppose each ciphertext sample differs by 1 bit in block 25. Compare the corresponding plaintext blocks following decryption of P and Q for each block cipher mode.
+ECB - Blocks 1 - 24, 26 - 100 are identical for P and Q. Block 25 is the only block that differs.
+CBC - Blocks 1 - 24 are identical for P and Q. Blocks 25 - 100 differ.
+CTR - Blocks 1 - 24, 26 - 100 are identical for P and Q. Block 25 is the only block that differs.
+CFB - Blocks 1 - 24 are identical for P and Q. Blocks 25 - 100 differ.
+OFB - Blocks 1 - 24, 26 - 100 are identical for P and Q. Block 25 is the only block that differs.
+
+Assume each cipher text block is stored on a disk block that can be accessed independently. Suppose block 50 of an encrypted file needs to be accessed. Which specific blocks of ciphertext must be accessed to perform the decryption for the following modes?
+ECB - Only block 50
+CBC - Blocks 49 and 50
+CTR - Only block 50
+CFB - Blocks 49 and 50
+OFB - Only block 50
+
+Which modes permit parallel encryption?
+ECB, CTR
+
+Which modes permit parallel decryption?
+ECB, CBC, CTR, CFB, OFB
+
+Which modes permit pre-computation of the key stream?
+CTR, OFB

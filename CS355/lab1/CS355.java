@@ -2,24 +2,25 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cs355.lab1;
+package lab1;
 
-import cs355.GUIFunctions;
+import resources.GUIFunctions;
 import java.awt.Color;
 
 /**
  *
- * @author <Put your name here>
+ * @author Dallin Christensen
  */
 public class CS355 
 {
-
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) 
     {
-        GUIFunctions.createCS355Frame(null,null,null,null);
+    	Shapes s = new Shapes();
+    	MyMouseListener ml = new MyMouseListener(s);
+        GUIFunctions.createCS355Frame(new Controller(s), new View(s), ml, ml);
         GUIFunctions.refresh();
         GUIFunctions.changeSelectedColor(Color.WHITE);
         GUIFunctions.setHScrollBarMin(0);
