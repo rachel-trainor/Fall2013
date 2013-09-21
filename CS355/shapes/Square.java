@@ -3,18 +3,30 @@ package shapes;
 import java.awt.Color;
 import java.awt.Point;
 
-import lab1.Shapes.Type;
-
-public class Square extends Rectangle {
+public class Square extends Shape {
+	Point upperLeft;
+	int size;
 	
-	public Square(Color c, Point tl) {
-		super(c, tl);
-		type = Type.SQUARE;
+	public Square(Color c, Point p) {
+		color = c;
+		upperLeft = p;
+		size = 0;
 	}
-
-	public Square(Color c, Point tl, Point br) {
-		super(c, tl, br);
-		type = Type.SQUARE;
+	
+	public Point uL() {
+		return upperLeft;
+	}
+	
+	public void setUL(Point p) {
+		upperLeft = p;
+	}
+	
+	public int size() {
+		return size;
+	}
+	
+	public void setSize(int s) {
+		size = s;
 	}
 
 }

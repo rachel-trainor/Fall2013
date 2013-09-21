@@ -3,21 +3,36 @@ package shapes;
 import java.awt.Color;
 import java.awt.Point;
 
-import lab1.Shapes.Type;
-
 public class Line extends Shape {
+	Point start;
+	Point end;
 	
-	public Line(Color c, Point start) {
+	public Line(Color c, Point p) {
 	    color = c;
-	    topLeft = start;
-	    bottomRight = start;
-	    type = Type.LINE;
+	    start = p;
+	    end = p;
 	}
 	
-	public Line(Color c, Point start, Point end) {
+	public Line(Color c, Point p1, Point p2) {
 	    color = c;
-	    topLeft = start;
-	    bottomRight = end;
-	    type = Type.LINE;
+	    start = p1;
+	    end = p2;
 	}
+	
+	public Point p1() {
+		return start;
+	}
+	
+	public Point p2() {
+		return end;
+	}
+	
+	public void setP1(Point p) {
+		start = p;
+	}
+	
+	public void setP2(Point p) {
+		end = p;
+	}
+	
 }

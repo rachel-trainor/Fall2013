@@ -1,7 +1,6 @@
 package lab1;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 
 import resources.ViewRefresher;
 import shapes.*;
@@ -19,21 +18,22 @@ public class View implements ViewRefresher {
 
 	@Override
 	public void refreshView(Graphics2D g2d) {
-		for(Shape s: shapes.shapes) {
-			switch(s.getType()) {
-			case RECTANGLE: 
+		for(Shape s: shapes.list()) {
+			switch(s.getClass().getName()) {
+			case "shapes.Rectangle": 
 				drawRectangle(g2d, (Rectangle) s); break;
-			case SQUARE:
+			case "shapes.Square":
 				drawSquare(g2d, (Square) s); break;
-			case ELLIPSE:
+			case "shapes.Ellipse":
 				drawEllipse(g2d, (Ellipse) s); break;
-			case CIRCLE:
+			case "shapes.Circle":
 				drawCircle(g2d, (Circle) s); break;
-			case TRIANGLE:
+			case "shapes.Triangle":
 				drawTriangle(g2d, (Triangle) s); break;
-			case LINE:
+			case "shapes.Line":
 				drawLine(g2d, (Line) s); break;
 			default: 
+				System.out.println(s.getClass().getName());
 				break;
 			}
 		}
@@ -41,37 +41,36 @@ public class View implements ViewRefresher {
 	}
 	
 	private void drawRectangle(Graphics2D g2d, Rectangle rectangle) {
-		Point topLeft = rectangle.getTopLeft();
-		g2d.setColor(rectangle.getColor());
-		g2d.fillRect(topLeft.x, topLeft.y, rectangle.getWidth(), rectangle.getHeight());
+		g2d.setColor(rectangle.color());
+		g2d.fillRect(rectangle.uL().x, rectangle.uL().y, rectangle.width(), rectangle.height());
 	}
 	
 	private void drawSquare(Graphics2D g2d, Square square) {
-		Point topLeft = square.getTopLeft();
-		g2d.setColor(square.getColor());
-		g2d.fillRect(topLeft.x, topLeft.y, square.getWidth(), square.getWidth());
+		g2d.setColor(square.color());
+		int size = Math.min(square.size(), square.size());
+		g2d.fillRect(square.uL().x, square.uL().y, size, size);
 	}
 	
 	private void drawEllipse(Graphics2D g2d, Ellipse ellipse) {
-		Point topLeft = ellipse.getTopLeft();
-		g2d.setColor(ellipse.getColor());
-		g2d.fillOval(topLeft.x, topLeft.y, ellipse.getWidth(), ellipse.getHeight());
+		g2d.setColor(ellipse.color());
+		g2d.fillOval(ellipse.uL().x, ellipse.uL().y, ellipse.width(), ellipse.height());
 	}
 	
 	private void drawCircle(Graphics2D g2d, Circle circle) {
-		Point topLeft = circle.getTopLeft();
-		g2d.setColor(circle.getColor());
-		g2d.fillOval(topLeft.x, topLeft.y, circle.getWidth(), circle.getWidth());
+		g2d.setColor(circle.color());
+		g2d.fillOval(circle.uL().x, circle.uL().y, circle.radius()*2, circle.radius()*2);
 	}
 	
 	private void drawTriangle(Graphics2D g2d, Triangle triangle) {
-		g2d.setColor(triangle.getColor());
-		g2d.fillPolygon(triangle.getXs(), triangle.getYs(), 3);
+		g2d.setColor(triangle.color());
+		int[] xs = new int[]{triangle.p1().x, triangle.p2().x, triangle.p3().x};
+		int[] ys = new int[]{triangle.p1().y, triangle.p2().y, triangle.p3().y};
+		g2d.fillPolygon(xs, ys, 3);
 	}
 	
 	private void drawLine(Graphics2D g2d, Line line) {
-		g2d.setColor(line.getColor());
-		g2d.drawLine(line.getTopLeft().x, line.getTopLeft().y, line.getBottomRight().x, line.getBottomRight().y);
+		g2d.setColor(line.color());
+		g2d.drawLine(line.p1().x, line.p1().y, line.p2().x, line.p2().y);
 	}
 
 }
