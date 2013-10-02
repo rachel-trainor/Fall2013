@@ -38,4 +38,17 @@ public class Triangle extends Shape {
 	public void setP3(Point newpoint) {
 		p3 = newpoint;
 	}
+
+	@Override
+	public boolean pointInShape(Point p) {
+		double ABC = Math.abs (p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
+		double ABP = Math.abs (p1.x * (p2.y - p.y) + p2.x * (p.y - p1.y) + p.x * (p1.y - p2.y));
+		double APC = Math.abs (p1.x * (p.y - p3.y) + p.x * (p3.y - p1.y) + p3.x * (p1.y - p.y));
+		double PBC = Math.abs (p.x * (p2.y - p3.y) + p2.x * (p3.y - p.y) + p3.x * (p.y - p2.y));
+
+		if(ABP + APC + PBC == ABC) {
+			return true;
+		}
+		return false;
+	}
 }

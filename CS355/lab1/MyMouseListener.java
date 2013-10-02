@@ -54,8 +54,10 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 			break; //do nothing
 		case LINE:
 			newShape = new Line(c, p); break;
+		case SELECT:
+			selectShape(p); break;
 		default:
-			System.out.println("something went wrong"); break;
+			System.out.println("something went wrong: " + shapes.getType()); break;
 		}
 	}
 
@@ -199,5 +201,19 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 			}
 		}
 	}
-
+	
+	public void selectShape(Point p) {
+		for(int i=shapes.size()-1; i >= 0; i--) {
+			Shape tmpShape = shapes.get(i);
+			
+			// convert the point's coordinates to object space
+			Point relativeP = new Point(p.x-tmpShape.offset().x(), p.y-tmpShape.offset().y());
+			
+			if(tmpShape.pointInShape(relativeP)) {
+				System.out.println("The point is in the shape!!! " + tmpShape.toString());
+				
+				return;
+			}
+		}
+	}
 }

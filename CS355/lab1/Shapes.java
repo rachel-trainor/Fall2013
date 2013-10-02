@@ -10,7 +10,7 @@ import resources.GUIFunctions;
 public class Shapes {
 	private Color color = Color.WHITE;
 	private ArrayList<Shape> shapes = new ArrayList<Shape>();
-	public enum Type { RECTANGLE, SQUARE, ELLIPSE, CIRCLE, LINE, TRIANGLE, NONE };
+	public enum Type { RECTANGLE, SQUARE, ELLIPSE, CIRCLE, LINE, TRIANGLE, SELECT, NONE };
 	private Type shapeType = Type.RECTANGLE;
 	
 	ArrayList<Shape> list() {
@@ -48,6 +48,10 @@ public class Shapes {
 	
 	Type getType() {
 		return shapeType;
+	}
+	
+	int size() {
+		return shapes.size();
 	}
 
 }

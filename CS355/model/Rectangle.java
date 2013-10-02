@@ -28,4 +28,12 @@ public class Rectangle extends Shape {
 	public void setWidth(int w) {
 		width = w;
 	}
+
+	@Override
+	public boolean pointInShape(Point p) {
+		if(Math.abs(p.x) <= width/2 && Math.abs(p.y) <= height/2) {
+			return true;
+		}
+		return false;
+	}
 }

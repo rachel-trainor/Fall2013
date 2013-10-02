@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Color;
+import java.awt.Point;
 
 public abstract class Shape {
 	Color color;
@@ -57,4 +58,6 @@ public abstract class Shape {
 			y = newy;
 		}
 	}
+	
+	public abstract boolean pointInShape(Point p);
 }

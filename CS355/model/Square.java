@@ -19,4 +19,12 @@ public class Square extends Shape {
 		size = s;
 	}
 
+	@Override
+	public boolean pointInShape(Point p) {
+		if(Math.abs(p.x) <= size/2 && Math.abs(p.y) <= size/2) {
+			return true;
+		}
+		return false;
+	}
+
 }

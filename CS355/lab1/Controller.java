@@ -57,18 +57,20 @@ public class Controller implements CS355Controller {
 	@Override
 	public void selectButtonHit() {
 		// TODO Auto-generated method stub
-		shapes.setType(Type.NONE);
+		shapes.setType(Type.SELECT);
 	}
 
 	@Override
 	public void zoomInButtonHit() {
 		// TODO Auto-generated method stub
+		shapes.setType(Type.NONE);
 		
 	}
 
 	@Override
 	public void zoomOutButtonHit() {
 		// TODO Auto-generated method stub
+		shapes.setType(Type.NONE);
 		
 	}
 

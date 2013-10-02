@@ -28,4 +28,16 @@ public class Ellipse extends Shape {
 	public void setWidth(int w) {
 		width = w;
 	}
+
+	@Override
+	public boolean pointInShape(Point p) {
+		double rx2 = (width/2)*(width/2);
+		double ry2 = (height/2)*(height/2);
+		if(Math.abs(p.x) > width/2 || Math.abs(p.y) > height/2) {
+			return false;
+		} else if(p.x*p.x*ry2 + p.y*p.y*rx2 <= rx2*ry2) {
+			return true;
+		}
+		return false;
+	}
 }
