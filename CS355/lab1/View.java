@@ -1,9 +1,11 @@
 package lab1;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
+import model.*;
 
 import resources.ViewRefresher;
-import shapes.*;
 
 public class View implements ViewRefresher {
 	Shapes shapes;
@@ -19,21 +21,25 @@ public class View implements ViewRefresher {
 	@Override
 	public void refreshView(Graphics2D g2d) {
 		for(Shape s: shapes.list()) {
+			AffineTransform oldXForm = g2d.getTransform();
+			g2d.translate(s.offset().x(), s.offset().y());
+			g2d.rotate(s.rotation());
 			switch(s.getClass().getName()) {
-			case "shapes.Rectangle": 
-				drawRectangle(g2d, (Rectangle) s); break;
-			case "shapes.Square":
-				drawSquare(g2d, (Square) s); break;
-			case "shapes.Ellipse":
-				drawEllipse(g2d, (Ellipse) s); break;
-			case "shapes.Circle":
-				drawCircle(g2d, (Circle) s); break;
-			case "shapes.Triangle":
-				drawTriangle(g2d, (Triangle) s); break;
-			case "shapes.Line":
-				drawLine(g2d, (Line) s); break;
+			case "model.Rectangle": 
+				drawRectangle(g2d, (Rectangle) s); g2d.setTransform(oldXForm); break;
+			case "model.Square":
+				drawSquare(g2d, (Square) s); g2d.setTransform(oldXForm); break;
+			case "model.Ellipse":
+				drawEllipse(g2d, (Ellipse) s); g2d.setTransform(oldXForm); break;
+			case "model.Circle":
+				drawCircle(g2d, (Circle) s); g2d.setTransform(oldXForm); break;
+			case "model.Triangle":
+				drawTriangle(g2d, (Triangle) s); g2d.setTransform(oldXForm); break;
+			case "model.Line":
+				drawLine(g2d, (Line) s); g2d.setTransform(oldXForm); break;
 			default: 
 				System.out.println(s.getClass().getName());
+				g2d.setTransform(oldXForm);
 				break;
 			}
 		}
@@ -42,23 +48,22 @@ public class View implements ViewRefresher {
 	
 	private void drawRectangle(Graphics2D g2d, Rectangle rectangle) {
 		g2d.setColor(rectangle.color());
-		g2d.fillRect(rectangle.uL().x, rectangle.uL().y, rectangle.width(), rectangle.height());
+		g2d.fillRect(-rectangle.width()/2, -rectangle.height()/2, rectangle.width(), rectangle.height());
 	}
 	
 	private void drawSquare(Graphics2D g2d, Square square) {
 		g2d.setColor(square.color());
-		int size = Math.min(square.size(), square.size());
-		g2d.fillRect(square.uL().x, square.uL().y, size, size);
+		g2d.fillRect(-square.size()/2, -square.size()/2, square.size(), square.size());
 	}
 	
 	private void drawEllipse(Graphics2D g2d, Ellipse ellipse) {
 		g2d.setColor(ellipse.color());
-		g2d.fillOval(ellipse.uL().x, ellipse.uL().y, ellipse.width(), ellipse.height());
+		g2d.fillOval(-ellipse.width()/2, -ellipse.height()/2, ellipse.width(), ellipse.height());
 	}
 	
 	private void drawCircle(Graphics2D g2d, Circle circle) {
 		g2d.setColor(circle.color());
-		g2d.fillOval(circle.uL().x, circle.uL().y, circle.radius()*2, circle.radius()*2);
+		g2d.fillOval(-circle.radius(), -circle.radius(), circle.radius()*2, circle.radius()*2);
 	}
 	
 	private void drawTriangle(Graphics2D g2d, Triangle triangle) {

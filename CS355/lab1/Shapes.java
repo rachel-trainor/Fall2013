@@ -3,8 +3,9 @@ package lab1;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import model.Shape;
+
 import resources.GUIFunctions;
-import shapes.Shape;
 
 public class Shapes {
 	private Color color = Color.WHITE;

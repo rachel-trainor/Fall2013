@@ -7,9 +7,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import lab1.Shapes.Type;
+import model.*;
+import model.Shape.Offset;
 
 import resources.GUIFunctions;
-import shapes.*;
 
 public class MyMouseListener implements MouseListener, MouseMotionListener {
 	Shapes shapes;
@@ -38,16 +39,17 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	public void mousePressed(MouseEvent arg0) {
 		Color c = shapes.getColor();
 		Point p = arg0.getPoint();
+		origin = p;
 		
 		switch(shapes.getType()) {
 		case RECTANGLE:
-			newShape = new Rectangle(c, p); origin = new Point(p.x, p.y); break;
+			newShape = new Rectangle(c, p); newShape.setOffset(p.x, p.y); break;
 		case SQUARE:
-			newShape = new Square(c, p); origin = new Point(p.x, p.y); break;
+			newShape = new Square(c, p); newShape.setOffset(p.x, p.y); break;
 		case ELLIPSE:
-			newShape = new Ellipse(c, p); origin = new Point(p.x, p.y); break;
+			newShape = new Ellipse(c, p); newShape.setOffset(p.x, p.y); break;
 		case CIRCLE:
-			newShape = new Circle(c, p); origin = new Point(p.x, p.y); break;
+			newShape = new Circle(c, p); newShape.setOffset(p.x, p.y); break;
 		case TRIANGLE:
 			break; //do nothing
 		case LINE:
@@ -94,17 +96,17 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	
 	private void updateShape(Shape s, Point p) {
 		switch(s.getClass().getName()) {
-		case "shapes.Rectangle":
+		case "model.Rectangle":
 			newShape = update((Rectangle) s, p); break;
-		case "shapes.Square":
+		case "model.Square":
 			newShape = update((Square) s, p); break;
-		case "shapes.Ellipse":
+		case "model.Ellipse":
 			newShape = update((Ellipse) s, p); break;
-		case "shapes.Circle":
+		case "model.Circle":
 			newShape = update((Circle) s, p); break;
-		case "shapes.Triangle":
+		case "model.Triangle":
 			break; // do nothing
-		case "shapes.Line":
+		case "model.Line":
 			newShape = update((Line) s, p); break;
 		}
 	}
@@ -115,7 +117,7 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 		
 		r.setHeight(Math.abs(h));
 		r.setWidth(Math.abs(w));
-		r.setUL(new Point(Math.min(origin.x, p.x), Math.min(origin.y, p.y)));
+		r.setOffset(origin.x+w/2, origin.y+h/2);
 
 		return r;
 	}
@@ -123,10 +125,9 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	private Square update(Square s, Point p) {
 		int h = p.y-origin.y;
 		int w = p.x-origin.x;
-		int size = Math.min(Math.abs(h), Math.abs(w));
 		
-		s.setSize(size);
-		s.setUL(new Point((w > 0) ? origin.x : origin.x-size, (h > 0) ? origin.y : origin.y-size));
+		s.setSize(Math.min(Math.abs(h), Math.abs(w)));
+		s.setOffset(origin.x+((w > 0) ? s.size()/2 : -s.size()/2), origin.y+((h > 0) ? s.size()/2 : -s.size()/2));
 
 		return s;
 	}
@@ -137,7 +138,7 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 		
 		e.setHeight(Math.abs(h));
 		e.setWidth(Math.abs(w));
-		e.setCenter(new Point((p.x+origin.x)/2,(p.y+origin.y)/2));
+		e.setOffset(origin.x+w/2, origin.y+h/2);
 		
 		return e;
 	}
@@ -148,8 +149,7 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 		int diameter = Math.min(Math.abs(h), Math.abs(w));
 		
 		c.setRadius(diameter/2);
-		Point ul = new Point((w > 0) ? origin.x : origin.x-diameter, (h > 0) ? origin.y : origin.y-diameter);
-		c.setCenter(new Point(ul.x + c.radius(), ul.y + c.radius()));
+		c.setOffset(origin.x+((w > 0) ? c.radius() : -c.radius()), origin.y+((h > 0) ? c.radius() : -c.radius()));
 
 		return c;
 	}

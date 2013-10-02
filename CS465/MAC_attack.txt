@@ -1,0 +1,4 @@
+A MAC attack exploits a vulnerability of hashing related to block sizes. 
+Because messages have padding added to them before getting hashed, there is a vulnerability where an attacker can add padding and their own message on to the end of a message. 
+It is possible to compute a message digest through chunk n by knowing the message digest through chunk n-1 plus the value of chunk n of the padded message. 
+The attacker doesn't need to know the secret key in order to properly hash the MAC. 
