@@ -176,6 +176,15 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 			} else { // p2 is set
 				if(setNewPoint) {
 					newTriangle.setP3(p);
+					Point p1 = newTriangle.p1();
+					Point p2 = newTriangle.p2();
+					Point p3 = newTriangle.p3();
+					int aveX = (p1.x + p2.x + p3.x)/3;
+					int aveY = (p1.y + p2.y + p3.y)/3;
+					newTriangle.setP1(new Point(p1.x-aveX, p1.y-aveY));
+					newTriangle.setP2(new Point(p2.x-aveX, p2.y-aveY));
+					newTriangle.setP3(new Point(p3.x-aveX, p3.y-aveY));
+					newTriangle.setOffset(aveX, aveY);
 					shapes.add(newTriangle);
 					GUIFunctions.refresh();
 					newTriangle = null;

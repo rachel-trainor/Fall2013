@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Point;
 
 public class Triangle extends Shape {
-	Point p1;
-	Point p2;
-	Point p3;
+	Point p1; // relative to the center of the triangle
+	Point p2; // relative to the center of the triangle
+	Point p3; // relative to the center of the triangle
 	
 	public Triangle(Color c, Point p) {
 		color = c;
