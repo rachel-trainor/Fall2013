@@ -12,6 +12,7 @@ public class Shapes {
 	private ArrayList<Shape> shapes = new ArrayList<Shape>();
 	public enum Type { RECTANGLE, SQUARE, ELLIPSE, CIRCLE, LINE, TRIANGLE, SELECT, NONE };
 	private Type shapeType = Type.RECTANGLE;
+	private Shape currentlySelected = null;
 	
 	ArrayList<Shape> list() {
 		return shapes;
@@ -52,6 +53,21 @@ public class Shapes {
 	
 	int size() {
 		return shapes.size();
+	}
+	
+	Shape selected() {
+		return currentlySelected;
+	}
+	
+	void setSelected(Shape s) {
+		currentlySelected = s;
+	}
+	
+	public int selectedIndex() {
+		if(currentlySelected == null) {
+			return -1;
+		}
+		return shapes.indexOf(currentlySelected);
 	}
 
 }

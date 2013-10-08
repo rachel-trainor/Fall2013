@@ -2,17 +2,16 @@ package model;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Triangle extends Shape {
 	Point p1; // relative to the center of the triangle
 	Point p2; // relative to the center of the triangle
 	Point p3; // relative to the center of the triangle
 	
-	public Triangle(Color c, Point p) {
+	public Triangle(Color c) {
 		color = c;
-		p1 = p;
-		p2 = p;
-		p3 = p;
+		p3 = p2 = p1 = new Point(0,0);
 	}
 	
 	public Point p1() {
@@ -50,5 +49,21 @@ public class Triangle extends Shape {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public ArrayList<Point> getHandles() {
+		ArrayList<Point> handles = new ArrayList<Point>();
+		handles.add(p1);
+		handles.add(p2);
+		handles.add(p3);
+		return handles;
+	}
+
+	@Override
+	public Point getRotationHandle() {
+		int y = Math.min(p1.y, p2.y);
+		y = Math.min(y, p3.y);
+		return new Point(0, y-20);
 	}
 }

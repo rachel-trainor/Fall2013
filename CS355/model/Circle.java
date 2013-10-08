@@ -2,13 +2,13 @@ package model;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Circle extends Shape {
 	int radius;
 	
-	public Circle(Color c, Point p) {
+	public Circle(Color c) {
 		color = c;
-		offset = new Offset(p.x, p.y);
 	}
 	
 	public int radius() {
@@ -29,4 +29,18 @@ public class Circle extends Shape {
 		return false;
 	}
 	
+	@Override
+	public ArrayList<Point> getHandles() {
+		ArrayList<Point> handles = new ArrayList<Point>();
+		handles.add(new Point(-radius, -radius));
+		handles.add(new Point(radius, -radius));
+		handles.add(new Point(-radius, radius));
+		handles.add(new Point(radius, radius));
+		return handles;
+	}
+
+	@Override
+	public Point getRotationHandle() {
+		return new Point(0, -(radius+16+8));
+	}
 }

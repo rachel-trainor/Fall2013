@@ -2,12 +2,13 @@ package model;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 
 public class Ellipse extends Shape {
 	int height;
 	int width;
 	
-	public Ellipse(Color c, Point p) {
+	public Ellipse(Color c) {
 	    color = c;
 	    height = 0;
 	    width = 0;
@@ -39,5 +40,20 @@ public class Ellipse extends Shape {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public ArrayList<Point> getHandles() {
+		ArrayList<Point> handles = new ArrayList<Point>();
+		handles.add(new Point(-width/2, -height/2));
+		handles.add(new Point(width/2, -height/2));
+		handles.add(new Point(-width/2, height/2));
+		handles.add(new Point(width/2, height/2));
+		return handles;
+	}
+
+	@Override
+	public Point getRotationHandle() {
+		return new Point(0, -((height/2)+16+8));
 	}
 }

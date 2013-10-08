@@ -1,22 +1,16 @@
 package model;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Line extends Shape {
 	Point start;
 	Point end;
 	double TOLERANCE = 4.0;
 	
-	public Line(Color c, Point p) {
+	public Line(Color c) {
 	    color = c;
-	    start = p;
-	    end = p;
-	}
-	
-	public Line(Color c, Point p1, Point p2) {
-	    color = c;
-	    start = p1;
-	    end = p2;
+	    end = start = new Point(0,0);
 	}
 	
 	public Point p1() {
@@ -59,4 +53,17 @@ public class Line extends Shape {
 	    return false;
 	}
 	
+	@Override
+	public ArrayList<Point> getHandles() {
+		ArrayList<Point> handles = new ArrayList<Point>();
+		handles.add(start);
+		handles.add(end);
+		return handles;
+	}
+
+	@Override
+	public Point getRotationHandle() {
+		int y = Math.max(start.y, end.y);
+		return new Point(0, -y+8);
+	}
 }

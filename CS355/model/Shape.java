@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 
 public abstract class Shape {
 	Color color;
@@ -60,4 +61,8 @@ public abstract class Shape {
 	}
 	
 	public abstract boolean pointInShape(Point p);
+	
+	public abstract ArrayList<Point> getHandles();
+	
+	public abstract Point getRotationHandle();
 }
