@@ -1,7 +1,7 @@
 package model;
 
 import java.awt.Color;
-import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public abstract class Shape {
@@ -17,7 +17,7 @@ public abstract class Shape {
 		return color;
 	}
 	
-	public void setOffset(int newx, int newy) {
+	public void setOffset(double newx, double newy) {
 		offset.setX(newx);
 		offset.setY(newy);
 	}
@@ -35,34 +35,34 @@ public abstract class Shape {
 	}
 	
 	public class Offset {
-		int x;
-		int y;
+		double x;
+		double y;
 		
-		public Offset(int newx, int newy) {
+		public Offset(double newx, double newy) {
 			x = newx;
 			y = newy;
 		}
 		
-		public int x() {
+		public double x() {
 			return x;
 		}
 		
-		public void setX(int newx) {
+		public void setX(double newx) {
 			x = newx;
 		}
 		
-		public int y() {
+		public double y() {
 			return y;
 		}
 		
-		public void setY(int newy) {
+		public void setY(double newy) {
 			y = newy;
 		}
 	}
 	
-	public abstract boolean pointInShape(Point p);
+	public abstract boolean PointInShape(Point2D p);
 	
-	public abstract ArrayList<Point> getHandles();
+	public abstract ArrayList<Point2D> getHandles();
 	
-	public abstract Point getRotationHandle();
+	public abstract Point2D getRotationHandle();
 }

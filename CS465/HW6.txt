@@ -1,0 +1,30 @@
+p = 7
+q = 13
+n = 7*13 = 91
+phi(n) = 6*12 = 72
+
+for e = 6
+GCD(72,6) = 12 r 0
+72 and 6 are not co-prime
+
+for e = 5
+GCD(72,5)
+72 % 5 = 14 r 2  =>   2 = 72(1) + 5(-14)
+5  % 2 =  2 r 1  =>   1 =  5(1) + 2(-2)    =>    1 = 5(1) + 72(-2) + 5(28)   => 1 = 5(29) + 72(-2)  => 1 = 5(29) % 72  => d = 29
+2  % 1 =  2 r 0
+
+for e = 4
+GCD(72,4) = 18 r 0
+72 and 4 are not co-prime
+
+for e = 3
+GCD(72,3) = 24 r 0
+72 and 3 are not co-prime
+
+for e = 2
+GCD(72,2) = 26 r 0
+72 and 2 are not co-prime
+
+for e = 1
+GCD(72,1) = 72 r 0
+1 is not secure, so let's use 5!

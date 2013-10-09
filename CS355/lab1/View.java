@@ -3,8 +3,8 @@ package lab1;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 import model.*;
 
@@ -61,7 +61,7 @@ public class View implements ViewRefresher {
 	
 	private void drawRectangle(Graphics2D g2d, Rectangle rectangle, boolean isSelected) {
 		g2d.setColor(rectangle.color());
-		g2d.fillRect(-rectangle.width()/2, -rectangle.height()/2, rectangle.width(), rectangle.height());
+		g2d.fillRect((int) -rectangle.width()/2, (int) -rectangle.height()/2, (int) rectangle.width(), (int) rectangle.height());
 		if(isSelected) { 
 			selectedShape = rectangle;
 			selectedShapeAT = g2d.getTransform();
@@ -69,39 +69,39 @@ public class View implements ViewRefresher {
 	}
 	
 	private void drawBoundingBoxHandles(Graphics2D g2d, Shape s) {
-		int h = 0;
-		int w = 0;
+		double h = 0;
+		double w = 0;
 		
 		switch(s.getClass().getName()) {
 		case "model.Rectangle": 
 			Rectangle rectangle = (Rectangle) s;
 			h = rectangle.height();
 			w = rectangle.width();
-			g2d.drawRect(-w/2, -h/2, w, h);
+			g2d.drawRect((int) -w/2, (int) -h/2, (int) w, (int) h);
 			break;
 		case "model.Square":
 			Square square = (Square) s;
 			h = w = square.size();
-			g2d.drawRect(-w/2, -h/2, w, h);
+			g2d.drawRect((int) -w/2, (int) -h/2, (int) w, (int) h);
 			break;
 		case "model.Ellipse":
 			Ellipse ellipse = (Ellipse) s;
 			h = ellipse.height();
 			w = ellipse.width();
-			g2d.drawOval(-w/2, -h/2, w, h);
+			g2d.drawOval((int) -w/2, (int) -h/2, (int) w, (int) h);
 			break;
 		case "model.Circle":
 			Circle circle = (Circle) s;
 			h = w = circle.radius()*2;
-			g2d.drawOval(-w/2, -h/2, w, h);
+			g2d.drawOval((int) -w/2, (int) -h/2, (int) w, (int) h);
 			break;
 		default: 
 			System.out.println("Error when drawing bounding box handles: No valid shape selected");
 			return;
 		}
 		
-		for(Point handleCenter: s.getHandles()) {
-			g2d.drawOval(handleCenter.x-H_SIZE/2, handleCenter.y-H_SIZE/2, H_SIZE, H_SIZE);
+		for(Point2D handleCenter: s.getHandles()) {
+			g2d.drawOval((int) handleCenter.getX()-H_SIZE/2, (int) handleCenter.getY()-H_SIZE/2, H_SIZE, H_SIZE);
 		}
 		
 		if(s.getClass().getName() != "model.Circle")
@@ -109,14 +109,14 @@ public class View implements ViewRefresher {
 	}
 	
 	private void drawRotationHandle(Graphics2D g2d, Shape s) {
-		Point handle = new Point(s.getRotationHandle().x, s.getRotationHandle().y);
-		g2d.drawLine(0, 0, handle.x, handle.y+H_SIZE/2);
-		g2d.drawOval(handle.x-H_SIZE/2, handle.y-H_SIZE/2, H_SIZE, H_SIZE);
+		Point2D handle = new Point2D.Double(s.getRotationHandle().getX(), s.getRotationHandle().getY());
+		g2d.drawLine(0, 0, (int) handle.getX(), (int) handle.getY()+H_SIZE/2);
+		g2d.drawOval((int) handle.getX()-H_SIZE/2, (int) handle.getY()-H_SIZE/2, H_SIZE, H_SIZE);
 	}
 	
 	private void drawSquare(Graphics2D g2d, Square square, boolean isSelected) {
 		g2d.setColor(square.color());
-		g2d.fillRect(-square.size()/2, -square.size()/2, square.size(), square.size());
+		g2d.fillRect((int) -square.size()/2, (int) -square.size()/2, (int) square.size(), (int) square.size());
 		if(isSelected) { 
 			selectedShape = square;
 			selectedShapeAT = g2d.getTransform();
@@ -125,7 +125,7 @@ public class View implements ViewRefresher {
 	
 	private void drawEllipse(Graphics2D g2d, Ellipse ellipse, boolean isSelected) {
 		g2d.setColor(ellipse.color());
-		g2d.fillOval(-ellipse.width()/2, -ellipse.height()/2, ellipse.width(), ellipse.height());
+		g2d.fillOval((int) -ellipse.width()/2, (int) -ellipse.height()/2, (int) ellipse.width(), (int) ellipse.height());
 		if(isSelected) { 
 			selectedShape = ellipse;
 			selectedShapeAT = g2d.getTransform();
@@ -134,7 +134,7 @@ public class View implements ViewRefresher {
 	
 	private void drawCircle(Graphics2D g2d, Circle circle, boolean isSelected) {
 		g2d.setColor(circle.color());
-		g2d.fillOval(-circle.radius(), -circle.radius(), circle.radius()*2, circle.radius()*2);
+		g2d.fillOval((int) -circle.radius(), (int) -circle.radius(), (int) circle.radius()*2, (int) circle.radius()*2);
 		if(isSelected) { 
 			selectedShape = circle;
 			selectedShapeAT = g2d.getTransform();
@@ -143,8 +143,8 @@ public class View implements ViewRefresher {
 	
 	private void drawTriangle(Graphics2D g2d, Triangle triangle, boolean isSelected) {
 		g2d.setColor(triangle.color());
-		int[] xs = new int[]{triangle.p1().x, triangle.p2().x, triangle.p3().x};
-		int[] ys = new int[]{triangle.p1().y, triangle.p2().y, triangle.p3().y};
+		int[] xs = new int[]{(int) triangle.p1().getX(), (int) triangle.p2().getX(), (int) triangle.p3().getX()};
+		int[] ys = new int[]{(int) triangle.p1().getY(), (int) triangle.p2().getY(), (int) triangle.p3().getY()};
 		g2d.fillPolygon(xs, ys, 3);
 		if(isSelected) { 
 			selectedShape = triangle;
@@ -153,18 +153,18 @@ public class View implements ViewRefresher {
 	}
 	
 	private void drawTriangleHandles(Graphics2D g2d, Triangle triangle) {
-		int[] xs = new int[]{triangle.p1().x, triangle.p2().x, triangle.p3().x};
-		int[] ys = new int[]{triangle.p1().y, triangle.p2().y, triangle.p3().y};
+		int[] xs = new int[]{(int) triangle.p1().getX(), (int) triangle.p2().getX(), (int) triangle.p3().getX()};
+		int[] ys = new int[]{(int) triangle.p1().getY(), (int) triangle.p2().getY(), (int) triangle.p3().getY()};
 		g2d.drawPolygon(xs, ys, 3);
-		for(Point handleCenter: triangle.getHandles()) {
-			g2d.drawOval(handleCenter.x-H_SIZE/2, handleCenter.y-H_SIZE/2, H_SIZE, H_SIZE);
+		for(Point2D handleCenter: triangle.getHandles()) {
+			g2d.drawOval((int) handleCenter.getX()-H_SIZE/2, (int) handleCenter.getY()-H_SIZE/2, H_SIZE, H_SIZE);
 		}
 		drawRotationHandle(g2d, triangle);
 	}
 	
 	private void drawLine(Graphics2D g2d, Line line, boolean isSelected) {
 		g2d.setColor(line.color());
-		g2d.drawLine(line.p1().x, line.p1().y, line.p2().x, line.p2().y);
+		g2d.drawLine((int) line.p1().getX(), (int) line.p1().getY(), (int) line.p2().getX(), (int) line.p2().getY());
 		if(isSelected) { 
 			selectedShape = line;
 			selectedShapeAT = g2d.getTransform();
@@ -172,10 +172,10 @@ public class View implements ViewRefresher {
 	}
 	
 	private void drawLineHandles(Graphics2D g2d, Line line) {
-		Point p1 = line.p1();
-		Point p2 = line.p2();
-		g2d.drawOval(p1.x-H_SIZE/2, p1.y-H_SIZE/2, H_SIZE, H_SIZE);
-		g2d.drawOval(p2.x-H_SIZE/2, p2.y-H_SIZE/2, H_SIZE, H_SIZE);
+		Point2D p1 = line.p1();
+		Point2D p2 = line.p2();
+		g2d.drawOval((int) p1.getX()-H_SIZE/2, (int) p1.getY()-H_SIZE/2, H_SIZE, H_SIZE);
+		g2d.drawOval((int) p2.getX()-H_SIZE/2, (int) p2.getY()-H_SIZE/2, H_SIZE, H_SIZE);
 //		drawRotationHandle(g2d, line);
 	}
 	
