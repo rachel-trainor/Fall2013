@@ -4,10 +4,15 @@
  */
 package resources;
 
+import static resources.CS355SScrollbarAttrConsts.H_SCROLL_BAR;
+import static resources.CS355SScrollbarAttrConsts.KNOB;
+import static resources.CS355SScrollbarAttrConsts.MIN;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JColorChooser;
@@ -282,11 +287,11 @@ class CS355Frame extends javax.swing.JFrame {
         controller.selectButtonHit();
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         controller.zoomInButtonHit();
     }//GEN-LAST:event_jButton10ActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         controller.zoomOutButtonHit();
     }//GEN-LAST:event_jButton9ActionPerformed
 
@@ -378,6 +383,9 @@ class CS355Frame extends javax.swing.JFrame {
                 break;
             case KNOB:
                 scrollbarToChange.setVisibleAmount(number);
+                break;
+            case POSIT:
+                scrollbarToChange.setValue(number);
                 break;
             default:
                 throw new IllegalArgumentException("Bad Attribute type!");

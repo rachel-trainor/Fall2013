@@ -25,9 +25,9 @@ public class CS355
         GUIFunctions.changeSelectedColor(Color.WHITE);
         GUIFunctions.setHScrollBarMin(0);
         GUIFunctions.setVScrollBarMin(0);
-        GUIFunctions.setHScrollBarMax(512);
-        GUIFunctions.setVScrollBarMax(512);
-        GUIFunctions.setHScrollBarKnob(256);
-        GUIFunctions.setVScrollBarKnob(256);
+        GUIFunctions.setHScrollBarMax(512*4);
+        GUIFunctions.setVScrollBarMax(512*4);
+        GUIFunctions.setHScrollBarKnob(512);
+        GUIFunctions.setVScrollBarKnob(512);
     }
 }

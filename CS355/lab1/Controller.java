@@ -9,9 +9,12 @@ import lab1.Shapes.Type;
 
 public class Controller implements CS355Controller {
 	Shapes shapes;
+	double maxZoom = 4.0;
+	double minZoom = 0.25;
 	
 	Controller() {
 		shapes = new Shapes();
+		GUIFunctions.refresh();
 	}
 	
 	Controller(Shapes s) {
@@ -78,29 +81,61 @@ public class Controller implements CS355Controller {
 	}
 
 	@Override
-	public void zoomInButtonHit() {
-		// TODO Auto-generated method stub
-		shapes.setType(Type.NONE);
+	public void zoomInButtonHit() {	
+		double newZoom = shapes.zoom()*2;
+		if(newZoom <= maxZoom) {
+			shapes.setZoom(newZoom);
+			GUIFunctions.setHScrollBarKnob((int) (512/newZoom));
+			GUIFunctions.setVScrollBarKnob((int) (512/newZoom));
+			shapes.setXScroll(shapes.xscroll() + (int) (512/(2*newZoom)));
+			shapes.setYScroll(shapes.yscroll() + (int) (512/(2*newZoom)));
+			normalizeScrollbars();
+		}
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void zoomOutButtonHit() {
-		// TODO Auto-generated method stub
-		shapes.setType(Type.NONE);
+		double newZoom = shapes.zoom()/2;
+		if(newZoom >= minZoom) {
+			shapes.setZoom(newZoom);
+			shapes.setXScroll(shapes.xscroll() - (int) (512/(4*newZoom)));
+			shapes.setYScroll(shapes.yscroll() - (int) (512/(4*newZoom)));
+			normalizeScrollbars();
+			GUIFunctions.setHScrollBarKnob((int) (512/newZoom));
+			GUIFunctions.setVScrollBarKnob((int) (512/newZoom));
+		}
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void hScrollbarChanged(int value) {
-		// TODO Auto-generated method stub
+		shapes.setXScroll(value);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void vScrollbarChanged(int value) {
-		// TODO Auto-generated method stub
+		shapes.setYScroll(value);
 		GUIFunctions.refresh();
+	}
+	
+	public void normalizeScrollbars() {
+		int scrollbarsize = (int) (512/shapes.zoom());
+		if(shapes.xscroll() > 2048 - scrollbarsize) {
+			shapes.setXScroll(2048 - scrollbarsize);
+		}
+		if(shapes.yscroll() > 2048 - scrollbarsize) {
+			shapes.setYScroll(2048 - scrollbarsize);
+		}
+		if(shapes.xscroll() < 0) {
+			shapes.setXScroll(0);
+		}
+		if(shapes.yscroll() < 0) {
+			shapes.setYScroll(0);
+		}
+		GUIFunctions.setHScrollBarPosit((int) shapes.xscroll());
+		GUIFunctions.setVScrollBarPosit((int) shapes.yscroll());
 	}
 
 }

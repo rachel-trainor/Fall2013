@@ -91,6 +91,26 @@ public class GUIFunctions
     {
         CS355Frame.inst().setScrollAttribute(CS355SScrollbarAttrConsts.H_SCROLL_BAR, CS355SScrollbarAttrConsts.KNOB, newKnob);
     }
+    
+    /**
+     * Sets the position of the scroll bar's knob. I do not believe this will trigger a 
+     * scrollbar changed event in your controller, but I could be wrong.
+     * @param newKnob the new position of the knob.
+     */
+    public static void setHScrollBarPosit(int newPosit)
+    {
+        CS355Frame.inst().setScrollAttribute(CS355SScrollbarAttrConsts.H_SCROLL_BAR, CS355SScrollbarAttrConsts.POSIT, newPosit);
+    }
+    
+    /**
+     * Sets the position of the scroll bar's knob. I do not believe this will trigger a 
+     * scrollbar changed event in your controller, but I could be wrong.
+     * @param newKnob the new position of the knob.
+     */
+    public static void setVScrollBarPosit(int newPosit)
+    {
+        CS355Frame.inst().setScrollAttribute(CS355SScrollbarAttrConsts.V_SCROLL_BAR, CS355SScrollbarAttrConsts.POSIT, newPosit);
+    }
 
     /**
      * Creates a new CS355Frame. This is probably about the first thing you should call.

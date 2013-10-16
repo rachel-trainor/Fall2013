@@ -26,16 +26,26 @@ public class View implements ViewRefresher {
 
 	@Override
 	public void refreshView(Graphics2D g2d) {
+		H_SIZE = 16;
 		selectedShapeAT = null;
 		selectedShape = null;
-		g2d.setStroke(new BasicStroke(2)); // not necessary, but it looks better
+		H_SIZE = (int) (H_SIZE/shapes.zoom());
+		g2d.setStroke(new BasicStroke((float) (2/shapes.zoom()))); // not necessary, but it looks better
 		int currentlySelected = shapes.selectedIndex();
 		for(int i=0; i<shapes.list().size(); i++) {
 			Shape s = shapes.get(i);
 			boolean isSelected = ((currentlySelected == i) ? true : false);
 			AffineTransform oldXForm = g2d.getTransform();
-			g2d.translate(s.offset().x(), s.offset().y());
-			g2d.rotate(s.rotation());
+			double zoom = shapes.zoom();
+			AffineTransform trans = 
+					new AffineTransform(zoom*Math.cos(s.rotation()),
+										zoom*Math.sin(s.rotation()),
+										-zoom*Math.sin(s.rotation()), 
+										zoom*Math.cos(s.rotation()),
+										zoom*(s.offset().x()-shapes.xscroll()),
+										zoom*(s.offset().y()-shapes.yscroll()));
+//			g2d.transform(trans);
+			g2d.setTransform(trans);
 			switch(s.getClass().getName()) {
 			case "model.Rectangle": 
 				drawRectangle(g2d, (Rectangle) s, isSelected); g2d.setTransform(oldXForm); break;
@@ -71,6 +81,8 @@ public class View implements ViewRefresher {
 	private void drawBoundingBoxHandles(Graphics2D g2d, Shape s) {
 		double h = 0;
 		double w = 0;
+//		Stroke oldStroke = g2d.getStroke();
+//		g2d.setStroke(new BasicStroke((int) (1/shapes.zoom())));
 		
 		switch(s.getClass().getName()) {
 		case "model.Rectangle": 

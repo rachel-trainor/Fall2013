@@ -13,6 +13,9 @@ public class Shapes {
 	public enum Type { RECTANGLE, SQUARE, ELLIPSE, CIRCLE, LINE, TRIANGLE, SELECT, NONE };
 	private Type shapeType = Type.RECTANGLE;
 	private Shape currentlySelected = null;
+	private double zoom = 1.0;
+	private double xscroll = 0.0;
+	private double yscroll = 0.0;
 	
 	ArrayList<Shape> list() {
 		return shapes;
@@ -69,5 +72,31 @@ public class Shapes {
 		}
 		return shapes.indexOf(currentlySelected);
 	}
+	
+	public double zoom() {
+		return zoom;
+	}
+	
+	public void setZoom(double z) {
+		zoom = z;
+	}
+	
+	public double xscroll() {
+		return xscroll;
+	}
+	
+	public void setXScroll(double x) {
+		xscroll = x;
+	}
+	
+	public double yscroll() {
+		return yscroll;
+	}
+	
+	public void setYScroll(double y) {
+		yscroll = y;
+	}
+	
+	
 
 }
