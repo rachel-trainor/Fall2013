@@ -1,0 +1,1 @@
+I set up my entire assignment as a JSFiddle. Check it out: http://jsfiddle.net/dallinski/BjbVa/
