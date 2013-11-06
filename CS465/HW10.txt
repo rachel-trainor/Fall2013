@@ -1,0 +1,13 @@
+What are two different ways to succeed at a stack smashing attack described in the paper?
+	To succeed at a stack smashing attack, you should use a buffer overflow approach (write code that overflows a buffer, thus overwriting data on the stack, allowing you to call other code).
+	1. Jump to address stored in a register technique
+		You can overwrite code in such a way that the function return will jump to an address that you specified (which should contain the code you wish to execute). In order to do this, you must know exactly where the stack pointer is and how big your buffer is. Because computers and programs differ so much in their execution, it is basically a shot in the dark trying to land on the right address.
+	2. NOP sled technique 
+		The other approach is to pad your code with a NOP sled. When you return, the jump will land you somewhere in the NOP sled and will execute all of the NOPs until it reaches your code. The NOP sled gives you a broad range of memory addresses to jump to that will result in your code being executed, increasing the likelihood that your code will actually get executed.
+
+How does the paper recommend you find a buffer overflow vulnerability? 
+	Find buffer overflow vulnerabilities by searching for functions for copying or appending strings that perform no boundary checking. They include: strcat(), strcpy(), sprintf(), and vsprintf(). These functions operate on null-terminated strings, and do not check for overflow of the receiving string.
+	Other vulnerable functions are getc(), fgetc(), or getchar(). If there are no explicit checks for overflows when using these functions in a while loop, programs are easily exploited.
+
+Do you know of any other ways to find this vulnerability?
+	No

@@ -1,0 +1,65 @@
+***************** PROBLEM 1 *****************
+rotation matrix
+| -0.71   0.00  -0.71   0.00 |
+|  0.00   1.00   0.00   0.00 |
+| -0.71   0.00   0.71   0.00 |
+|  0.00   0.00   0.00   1.00 |
+
+translation matrix
+|  1.00   0.00   0.00 -10.00 |
+|  0.00   1.00   0.00   0.00 |
+|  0.00   0.00   1.00   0.00 |
+|  0.00   0.00   0.00   1.00 |
+
+World to Camera matrix
+| -0.71   0.00  -0.71   7.07 |
+|  0.00   1.00   0.00   0.00 |
+| -0.71   0.00   0.71   7.07 |
+|  0.00   0.00   0.00   1.00 |
+
+world-space point pw in camera coordinates
+(-28.28, 10.00, 42.43)
+
+***************** PROBLEM 1 *****************
+
+
+----------------- PROBLEM 2 -----------------
+clip matrix
+|  1.73   0.00   0.00   0.00 |
+|  0.00   0.97   0.00   0.00 |
+|  0.00   0.00   1.00   0.00 |
+|  0.00   0.00  -2.00   0.00 |
+
+clip-space coordinates of the camera-space point pc = (10,10,20)
+(17.32, 9.74, 20.04)
+
+Is this point within the viewing frustum? 
+Yes
+
+canonical view coordinates of point pc = (10,10,20)
+(-0.43, -0.24)
+
+----------------- PROBLEM 2 -----------------
+
+
+''''''''''''''''' PROBLEM 3 '''''''''''''''''
+viewport matrix
+| 960.00   0.00   0.00   1.00 |
+|  0.00  540.00   0.00   1.00 |
+|  0.00    0.00   0.00   0.00 |
+|  0.00    0.00   0.00   0.00 |
+
+onscreen coordinates of the point (10,10,20)
+(544.72, 408.60)
+
+''''''''''''''''' PROBLEM 3 '''''''''''''''''
+
+
+^^^^^^^^^^^^^^^^^ PROBLEM 4 ^^^^^^^^^^^^^^^^^
+normal to the triangle
+(-4.0, 4.0, 6.0)
+
+If the camera’s optical axis points points in the same direction 
+as the vector (1,1,1), this triangle is back-facing.
+
+^^^^^^^^^^^^^^^^^ PROBLEM 4 ^^^^^^^^^^^^^^^^^
