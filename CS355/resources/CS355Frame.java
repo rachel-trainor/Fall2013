@@ -9,10 +9,15 @@ import static resources.CS355SScrollbarAttrConsts.KNOB;
 import static resources.CS355SScrollbarAttrConsts.MIN;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JColorChooser;
@@ -22,9 +27,13 @@ import javax.swing.JScrollBar;
  *
  * @author Talonos
  */
-class CS355Frame extends javax.swing.JFrame {
+class CS355Frame extends javax.swing.JFrame implements KeyListener
+{
 
     private static CS355Frame instance;
+    private Color selectedColor = Color.BLACK;
+    private Set<Integer>keysPressed = new TreeSet<>();
+    Semaphore protectKeyList = new Semaphore(1);
     
     static CS355Frame inst()
     {
@@ -48,15 +57,33 @@ class CS355Frame extends javax.swing.JFrame {
     
         CS355Controller controller;
     
+        
+    Thread keyPollingThread;
     private CS355Frame(CS355Controller c, ViewRefresher viewRefresher, MouseListener mouseListener, MouseMotionListener mml) 
     {
         initComponents();
         controller = c;
         RedrawRoutine r = RedrawRoutine.inst();
         r.initialize(canvas1, viewRefresher);
+        canvas1.addKeyListener(this);
+        jButton1.addKeyListener(this);
+        jButton2.addKeyListener(this);
+        jButton3.addKeyListener(this);
+        jButton4.addKeyListener(this);
+        jButton5.addKeyListener(this);
+        jButton6.addKeyListener(this);
+        jButton7.addKeyListener(this);
+        jButton8.addKeyListener(this);
+        jButton9.addKeyListener(this);
+        jButton10.addKeyListener(this);
+        jButton11.addKeyListener(this);
+        jScrollBar1.addKeyListener(this);
+        jScrollBar2.addKeyListener(this);
         canvas1.addMouseListener(mouseListener);
         canvas1.addMouseMotionListener(mml);
         setSelectedColor(new Color(128,128,128,0));
+        keyPollingThread = new Thread(new pollingThread(this));
+        keyPollingThread.start();
     }
 
     /**
@@ -84,6 +111,7 @@ class CS355Frame extends javax.swing.JFrame {
         jScrollBar2 = new javax.swing.JScrollBar();
         canvas2 = new java.awt.Canvas();
         canvas2 = new CS355SmallCanvas();
+        jButton11 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -178,6 +206,13 @@ class CS355Frame extends javax.swing.JFrame {
             }
         });
 
+        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cs355/res/House.png"))); // NOI18N
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
 
@@ -192,18 +227,23 @@ class CS355Frame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(canvas2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -247,6 +287,8 @@ class CS355Frame extends javax.swing.JFrame {
                         .addComponent(jButton9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton11)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -303,6 +345,10 @@ class CS355Frame extends javax.swing.JFrame {
         controller.vScrollbarChanged(evt.getValue());
     }//GEN-LAST:event_jScrollBar1AdjustmentValueChanged
 
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        controller.toggle3DModelDisplay();
+    }//GEN-LAST:event_jButton11ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -343,6 +389,7 @@ class CS355Frame extends javax.swing.JFrame {
     private java.awt.Canvas canvas2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -393,8 +440,6 @@ class CS355Frame extends javax.swing.JFrame {
         }
     }
     
-    private Color selectedColor = Color.BLACK;
-    
     void setSelectedColor(Color c)
     {
         selectedColor = c;
@@ -416,5 +461,64 @@ class CS355Frame extends javax.swing.JFrame {
     void setSelectedColor() 
     {
         setSelectedColor(selectedColor);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) 
+    {
+        //Typing doesn't do anything.
+    }
+    
+    @Override
+    public void keyPressed(KeyEvent e) 
+    {
+        //This is a set instead of a list because holding down a key will call
+        //this function many times in a row. You cannot guarentee that there is
+        //only one press per release like you can with a click.
+        protectKeyList.acquireUninterruptibly();
+        keysPressed.add(e.getKeyCode());
+        protectKeyList.release();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) 
+    {
+        protectKeyList.acquireUninterruptibly();
+        keysPressed.remove(e.getKeyCode());
+        protectKeyList.release();
+    }
+    
+    private static class pollingThread implements Runnable 
+    {
+
+        CS355Frame parent;
+        public pollingThread(CS355Frame parent) 
+        {
+            this.parent = parent;
+        }
+
+        @Override
+        public void run() 
+        {
+            while(true)
+            {
+                try 
+                {
+                    Thread.sleep(33);
+                    if (!parent.keysPressed.isEmpty())
+                    {
+                        //This is to prevent the form from concurrently modifying
+                        //the list while iterating through it.
+                        parent.protectKeyList.acquire();
+                        parent.controller.keyPressed(parent.keysPressed.iterator());
+                        parent.protectKeyList.release();
+                    }
+                } 
+                catch (InterruptedException ex) 
+                {
+                    Logger.getLogger(CS355Frame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }
 }

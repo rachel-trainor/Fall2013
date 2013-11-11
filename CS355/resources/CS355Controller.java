@@ -5,6 +5,7 @@
 package resources;
 
 import java.awt.Color;
+import java.util.Iterator;
 
 /**
  *
@@ -31,4 +32,8 @@ public interface CS355Controller
     public void hScrollbarChanged(int value);
 
     public void vScrollbarChanged(int value);
+
+    public void toggle3DModelDisplay();
+
+    public void keyPressed(Iterator<Integer> iterator);
 }
