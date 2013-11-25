@@ -1,0 +1,81 @@
++ ./random_password.py -length 1 -type l
+salt salty o
+user1:$1$salty$JKs8ROKfYKHr3/Oi9gJ6E1
++ ./random_password.py -length 1 -type u
+salt salty O
+user1:$1$salty$v51EZ8jMqf20n3GJjCxo40
++ ./random_password.py -length 1 -type a
+salt salty ~
+user1:$1$salty$6r0xdwgSu0CcnGDQ6W5XA1
++ ./random_password.py -length 2 -type l
+salt salty lx
+user1:$1$salty$Oetp35J/QCRVDfkJNOoGA.
++ ./random_password.py -length 2 -type u
+salt salty Zw
+user1:$1$salty$i10rYVua.fCZTOXBiQ9qN0
++ ./random_password.py -length 2 -type a
+salt salty T>
+user1:$1$salty$tgf9GV5sGclpZipAsQWyj0
++ ./random_password.py -length 4 -type l
+salt salty xixc
+user1:$1$salty$1Px5R8.ZVFeRbKfFgjG4W/
++ ./random_password.py -length 4 -type u
+salt salty akyp
+user1:$1$salty$/K5lw8ZBPUJY7/wjI.GZO0
++ ./random_password.py -length 4 -type a
+salt salty '-y~
+user1:$1$salty$JBJdT17A930UZRV.QSwdA.
++ ./random_password.py -length 6 -type l
+salt salty qllboq
+user1:$1$salty$zbeIxKrUylEKmo8xw9qSn0
++ ./random_password.py -length 6 -type u
+salt salty uRiwXS
+user1:$1$salty$7o6aGSwz6DZYyBNVv0YFO.
++ ./random_password.py -length 6 -type a
+salt salty .8f[y^
+user1:$1$salty$9f3pdEIHJuVfgEjwAvz9q1
++ ./random_password.py -length 8 -type l
+salt salty iamosgzx
+user1:$1$salty$3618Wo9gw9Gt0rmlouzda0
++ ./random_password.py -length 8 -type u
+salt salty bRTReRdT
+user1:$1$salty$1TA.E0uM5RkGvH64FuPGz1
++ ./random_password.py -length 8 -type a
+salt salty vzOG\[I!
+user1:$1$salty$4hs9S260/m9/prhWpGMeK1
++ ./random_password.py -length 10 -type l
+salt salty peovgoadfc
+user1:$1$salty$QoP2lRyQ7InBrIuKlufBN/
++ ./random_password.py -length 10 -type u
+salt salty bcBCUsVvHo
+user1:$1$salty$5L1Ppc0rQO4QA.vm1COXY.
++ ./random_password.py -length 10 -type a
+salt salty Lg'hQa-N%M
+user1:$1$salty$BB2FeNsCo7M462ilEUE8Q1
++ ./random_password.py -length 12 -type l
+salt salty bojuwrrgshqk
+user1:$1$salty$.MH0lsq.joJCfLc9o0efX1
++ ./random_password.py -length 12 -type u
+salt salty QytDXloMPtqv
+user1:$1$salty$CXXFZqlJdtfNHacP2TZNY.
++ ./random_password.py -length 12 -type a
+salt salty '|`q'8~94j|@
+user1:$1$salty$yJnnBh/BP.IyipdEhJ8aa0
++ ./random_password.py -length 14 -type l
+salt salty nkhgmqeeyoqiog
+user1:$1$salty$LFH9V9xBexL/85YZAvRco/
++ ./random_password.py -length 14 -type u
+salt salty JTXMsculySTvmh
+user1:$1$salty$YsP7kp70haeK/YnrFcepW/
++ ./random_password.py -length 14 -type a
+salt salty <i8-(L$#6HsKFG
+user1:$1$salty$cVm5XwJx3yCd0aAeXLcn30
++ ./random_password.py -length 16 -type l
+salt salty amctgwlxteaiagik
+user1:$1$salty$98Ha41TlzgzVjGdVA2zI..
++ ./random_password.py -length 16 -type u
+salt salty iIlUpNTcOspnEDJk
+user1:$1$salty$IgU/BZB.AFlFZm8M1mgfr.
++ ./random_password.py -length 16 -type a
+salt salty X*\RH72O6X-MnH$R
+user1:$1$salty$aPPRHFpSYX2fc8dHCOhtM.

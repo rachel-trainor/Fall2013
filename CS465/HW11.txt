@@ -1,0 +1,14 @@
+Question 1: List at least 5 defenses against buffer overflow attacks and provide a sentence or two describing what they are or how they work.
+	
+	1. Address space layout randomization - Initialize the stack to a different address in memory each time it is initialized, thus making it nearly impossible to find an address that allow for stack smashing.
+	2. Non-executable stack - Don't allow code from the stack to be executable, thus eliminating the possibility that the exploit can run code directly from the stack.
+	3. Bounds checking - Check that all memory addresses accessed by the code are within the proper bounds, preventing any return addresses from being overwritten.
+	Canaries - Known values that are placed between a buffer and control data on the stack to monitor buffer overflows. When the buffer overflows, the first data to be corrupted will be the canary, and a failed verification of the canary data is therefore an alert of an overflow, which can then be handled, for example, by invalidating the corrupted data.
+		4. Terminator canaries - Canaries built with NULL terminators (because most buffer overflow attacks are based on certain string operations which end at terminators).
+		5. Random canaries - A random value generated at program initialization and stored as a global variable. Thus the attacker cannot learn the canary value prior to the program start by searching the executable image. It is generally not possible to read the random canary (and most attempts result in segmentation faults that kill the program).
+		6. XOR canaries - Random Canaries that are XOR scrambled using all or part of the control data. An attacker must get the canary, the algorithm, and the control data to generate the original canary for re-encoding into the canary he needs to use to spoof the protection.
+
+Question 2: We learned in class about a null terminator canary and a random canary. What is a limitation of the null terminator canary? What limitation of the random canary led to the development of the XOR canary?
+
+	The null terminator canary is always built of NULL terminators, CR, LF, and -1, and the undesirable result is that the canary is known. Attackers can easily overwrite the canary with its known value.
+	Random canaries are generally not logically possible to read, unless the attacker knows where it is or can get the program to read from the stack. If the attacker does that, they know the canary value and can overwrite it with the known value.

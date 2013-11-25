@@ -1,0 +1,34 @@
+Question 1: List 10 attacks and vulnerabilities that you are unfamiliar with. Include the attacks that you are most interested in learning about.
+	1. Account lockout attack
+	2. Binary planting attack
+	3. Cache poisoning attack
+	4. Cash overflow attack
+	5. Command injection attack
+	6. Cross-user defacement attack
+	7. Double encoding attack
+	8. Forced browsing attack
+	9. Traffic flood attack
+	10. Path traversal attack
+
+Question 2: Spend 1 hour learning about one or more of these attacks. Where possible, experiment with the details on your own computer if you can do it in a safe manner that does not involve attacking any other system you do not own. Write a brief report (1 page max) on what you learn. Your writeup should be in your own words. Cite any other sources you use in learning about the attack. The OWASP site should contain enough material to get you started.
+
+Cache Poisoning - overview
+	(DNS) Cache poisoning is when an attacker flushes a web cache and replaces the cache with malicious content (typically done by inserting a fake address record for an Internet domain into the DNS). If done to a web cache accessed by multiple users (shared web cache), all of the users will receive the malicious content until the cache is flushed. This kind of attack is possible only because of HTTP response splitting and is hard to actually implement because most servers/caches have safeguards to prevent it. However, if there is a successful attack, it can harm the end-user even after the compromised server resolves all problems because the malicious content is cached on the user's machine.
+
+How it works
+	An attacker gets control of a DNS server and changes some of the information on it, making legitimate domains actually point to an IP address the attacker owns. The attacker’s address could contain some sort of malicious phishing website. 
+
+	DNS poisoning can spread if many ISPs are getting their DNS information from the compromised server. The poisoned DNS entry will spread to the Internet service providers and be cached there, then spread to home routers and the DNS caches on computers as they look up the DNS entry, receive the incorrect response, and store it.
+
+How to prevent it
+	One possible way to defend against cache poisoning attacks is to randomize the UDP port used for DNS queries instead of using the default port 53. Randomizing the UDP source port makes it harder for an attacker to guess query parameters since both the 16-bit query ID and as many as 16 additional bits for the UDP port must be correct.
+	Another possible defense is DNSSEC (Domain Name System Security Extensions). DNSSEC will allow organizations to sign their DNS records using public-key cryptography, ensuring that your computer will know whether a DNS record should be trusted or whether it’s been poisoned and redirects to an incorrect location. Currently DNSSEC is not widely used, so it's usefulness is minimized.
+
+Resources
+	http://www.ietf.org/proceedings/87/slides/slides-87-saag-3.pdf
+	http://en.wikipedia.org/wiki/Domain_Name_System_Security_Extensions#History
+	http://www.networkworld.com/news/tech/2008/102008-tech-update.html?page=2
+	http://packetstorm.interhost.co.il/papers/general/whitepaper_httpresponse.pdf
+	https://www.owasp.org/index.php/Cache_Poisoning
+	http://www.iana.org/about/presentations/davies-viareggio-entropyvuln-081002.pdf
+	http://www.secureworks.com/resources/articles/other_articles/dns-cache-poisoning/
