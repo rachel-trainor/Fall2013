@@ -1,0 +1,9 @@
+1) Describe briefly and clearly how the attack works
+	The attack allows for injection of code into the compiler and then concealing its tracks. In the case of Ken Thompson, he injected code into the compiler that matched the UNIX login command but would accept the user's encrypted password OR a particular password that he had set up. That backdoor enabled him to log into the system as any user.
+
+2) If you suspect that your machine has been compromised, what should you do about it?
+	If you suspect that your machine has been compromised, you should probably use a new system. As Ken Thompson explained, it is nearly impossible to find his attack, even using normal debugging methods, so it would be a lot easier/faster to just replace your system. Obviously it depends on what was compromised: if the C compiler was compromised, use a C compiler that you can trust, etc.
+
+3) What other kinds of software like compilers do we usually trust that have the potential to be compromised?
+	IDEs that call the compile chain for the user - IDEs could very easily insert code into the compile chain without the user knowing about it.
+	Device drivers
