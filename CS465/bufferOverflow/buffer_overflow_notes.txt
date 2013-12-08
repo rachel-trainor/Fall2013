@@ -1,0 +1,15 @@
+auth_overflow1
+	Access Granted when using any password of length 17-27
+	Access Granted, but a segfault, when using any password of length 28-31
+	Segfault when using any password of length 32
+	Buffer is length 16
+	Auth flag gets overwritten when buffer is overflown
+
+	Be able to explain how the stack works. 
+	- ebp, esp, return address, local variables
+
+auth_overflow2
+	Switching the position of auth_flag and password_buffer doesn't fix the problem because this compiler places local variables on the stack in the same order.
+
+auth_overflow3
+	
