@@ -1,7 +1,5 @@
 package LWJGL;
 
-import java.util.logging.Level;
-
 /**
  *
  * @author Brennan Smith

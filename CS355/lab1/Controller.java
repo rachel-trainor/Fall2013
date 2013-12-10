@@ -1,94 +1,108 @@
 package lab1;
 
+import LWJGL.HouseModel;
+import LWJGL.Line3D;
+import LWJGL.WireFrame;
+
 import java.awt.Color;
+import java.awt.image.*;
+import java.util.Iterator;
 
 import resources.CS355Controller;
 import resources.GUIFunctions;
 
-import lab1.Shapes.Type;
+import lab1.Manager.Type;
 
 public class Controller implements CS355Controller {
-	Shapes shapes;
+	Manager manager;
 	double maxZoom = 4.0;
 	double minZoom = 0.25;
+	private VirtualCamera cam = new VirtualCamera();
+	private WireFrame model = new HouseModel();
+	static int viewportW = 640;
+	static int viewportH = 480;
+	float fovy = 85;
+	float aspect = viewportW/viewportH;
+	float zNear = 0.1f;
+	float zFar = 500;
 	
 	Controller() {
-		shapes = new Shapes();
+		manager = new Manager();
 		GUIFunctions.refresh();
 	}
 	
-	Controller(Shapes s) {
-		shapes = s;
+	Controller(Manager m) {
+		manager = m;
 	}
 
 	@Override
 	public void colorButtonHit(Color c) {
 		GUIFunctions.changeSelectedColor(c);
-		shapes.setColor(c);
-		if(shapes.selected() != null) {
-			shapes.selected().setColor(c);
+		manager.setColor(c);
+		if(manager.selected() != null) {
+			manager.selected().setColor(c);
 		}
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void triangleButtonHit() {
-		shapes.setType(Type.TRIANGLE);
-		shapes.setSelected(null);
+		manager.setType(Type.TRIANGLE);
+		manager.setSelected(null);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void squareButtonHit() {
-		shapes.setType(Type.SQUARE);
-		shapes.setSelected(null);
+		manager.setType(Type.SQUARE);
+		manager.setSelected(null);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void rectangleButtonHit() {
-		shapes.setType(Type.RECTANGLE);
-		shapes.setSelected(null);
+		manager.setType(Type.RECTANGLE);
+		manager.setSelected(null);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void circleButtonHit() {
-		shapes.setType(Type.CIRCLE);
-		shapes.setSelected(null);
+		manager.setType(Type.CIRCLE);
+		manager.setSelected(null);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void ellipseButtonHit() {
-		shapes.setType(Type.ELLIPSE);
-		shapes.setSelected(null);
+		manager.setType(Type.ELLIPSE);
+		manager.setSelected(null);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void lineButtonHit() {
-		shapes.setType(Type.LINE);
-		shapes.setSelected(null);
+		manager.setType(Type.LINE);
+		manager.setSelected(null);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void selectButtonHit() {
-		shapes.setSelected(null);
-		shapes.setType(Type.SELECT);
+		manager.setSelected(null);
+		manager.setType(Type.SELECT);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void zoomInButtonHit() {	
-		double newZoom = shapes.zoom()*2;
+		double newZoom = manager.zoom()*2;
 		if(newZoom <= maxZoom) {
-			shapes.setZoom(newZoom);
+			manager.setZoom(newZoom);
 			GUIFunctions.setHScrollBarKnob((int) (512/newZoom));
 			GUIFunctions.setVScrollBarKnob((int) (512/newZoom));
-			shapes.setXScroll(shapes.xscroll() + (int) (512/(2*newZoom)));
-			shapes.setYScroll(shapes.yscroll() + (int) (512/(2*newZoom)));
+			manager.setXScroll(manager.xscroll() + (int) (512/(2*newZoom)));
+			manager.setYScroll(manager.yscroll() + (int) (512/(2*newZoom)));
 			normalizeScrollbars();
 		}
 		GUIFunctions.refresh();
@@ -96,11 +110,11 @@ public class Controller implements CS355Controller {
 
 	@Override
 	public void zoomOutButtonHit() {
-		double newZoom = shapes.zoom()/2;
+		double newZoom = manager.zoom()/2;
 		if(newZoom >= minZoom) {
-			shapes.setZoom(newZoom);
-			shapes.setXScroll(shapes.xscroll() - (int) (512/(4*newZoom)));
-			shapes.setYScroll(shapes.yscroll() - (int) (512/(4*newZoom)));
+			manager.setZoom(newZoom);
+			manager.setXScroll(manager.xscroll() - (int) (512/(4*newZoom)));
+			manager.setYScroll(manager.yscroll() - (int) (512/(4*newZoom)));
 			normalizeScrollbars();
 			GUIFunctions.setHScrollBarKnob((int) (512/newZoom));
 			GUIFunctions.setVScrollBarKnob((int) (512/newZoom));
@@ -110,32 +124,104 @@ public class Controller implements CS355Controller {
 
 	@Override
 	public void hScrollbarChanged(int value) {
-		shapes.setXScroll(value);
+		manager.setXScroll(value);
 		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void vScrollbarChanged(int value) {
-		shapes.setYScroll(value);
+		manager.setYScroll(value);
 		GUIFunctions.refresh();
 	}
 	
 	public void normalizeScrollbars() {
-		int scrollbarsize = (int) (512/shapes.zoom());
-		if(shapes.xscroll() > 2048 - scrollbarsize) {
-			shapes.setXScroll(2048 - scrollbarsize);
+		int scrollbarsize = (int) (512/manager.zoom());
+		if(manager.xscroll() > 2048 - scrollbarsize) {
+			manager.setXScroll(2048 - scrollbarsize);
 		}
-		if(shapes.yscroll() > 2048 - scrollbarsize) {
-			shapes.setYScroll(2048 - scrollbarsize);
+		if(manager.yscroll() > 2048 - scrollbarsize) {
+			manager.setYScroll(2048 - scrollbarsize);
 		}
-		if(shapes.xscroll() < 0) {
-			shapes.setXScroll(0);
+		if(manager.xscroll() < 0) {
+			manager.setXScroll(0);
 		}
-		if(shapes.yscroll() < 0) {
-			shapes.setYScroll(0);
+		if(manager.yscroll() < 0) {
+			manager.setYScroll(0);
 		}
-		GUIFunctions.setHScrollBarPosit((int) shapes.xscroll());
-		GUIFunctions.setVScrollBarPosit((int) shapes.yscroll());
+		GUIFunctions.setHScrollBarPosit((int) manager.xscroll());
+		GUIFunctions.setVScrollBarPosit((int) manager.yscroll());
+	}
+
+	@Override
+	public void toggle3DModelDisplay() {
+		manager.toggle3d();
+	}
+
+	@Override
+	public void keyPressed(Iterator<Integer> iterator) {
+		if(!manager.showHouse) return;
+		
+		int tmp = iterator.next();
+		char ch = (char) tmp;
+		switch (ch) {
+		case 'A': cam.left(); break;
+		case 'D': cam.right(); break;
+		case 'W': if(cam.z > -zFar) cam.forward(); break;
+		case 'S': if(cam.z < zFar) cam.backward(); break;
+		case 'Q': cam.turnL(); break;
+		case 'E': cam.turnR(); break;
+		case 'R': cam.up(); break;
+		case 'F': cam.down(); break;
+		case 'H': cam.home(); break;
+		}
+	}
+
+	@Override
+	public void doEdgeDetection() {
+		manager.image.detectEdges();
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void doSharpen() {
+		manager.image.sharpen();
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void doMedianBlur() {
+		manager.image.medianBlur();
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void doUniformBlur() {
+		manager.image.uniformBlur();
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void doChangeContrast(int contrastAmountNum) {
+		manager.image.changeContrast(contrastAmountNum);
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void doChangeBrightness(int brightnessAmountNum) {
+		manager.image.changeBrightness(brightnessAmountNum);
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void doLoadImage(BufferedImage openImage) {
+		manager.setImage(openImage);
+		GUIFunctions.refresh();
+	}
+
+	@Override
+	public void toggleBackgroundDisplay() {
+		manager.toggleImage();
+		GUIFunctions.refresh();
 	}
 
 }

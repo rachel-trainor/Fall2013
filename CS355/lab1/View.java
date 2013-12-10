@@ -5,45 +5,48 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.*;
 
 import model.*;
 
 import resources.ViewRefresher;
 
 public class View implements ViewRefresher {
-	Shapes shapes;
+	Manager manager;
 	int H_SIZE = 16;
 	AffineTransform selectedShapeAT;
 	Shape selectedShape;
 	
 	View() {
-		shapes = new Shapes();
+		manager = new Manager();
 	}
 	
-	View(Shapes s) {
-		shapes = s;
+	View(Manager m) {
+		manager = m;
 	}
 
 	@Override
 	public void refreshView(Graphics2D g2d) {
+		if(manager.showImage && manager.image != null)
+			renderImage(g2d, new AffineTransform());
 		H_SIZE = 16;
 		selectedShapeAT = null;
 		selectedShape = null;
-		H_SIZE = (int) (H_SIZE/shapes.zoom());
-		g2d.setStroke(new BasicStroke((float) (2/shapes.zoom()))); // not necessary, but it looks better
-		int currentlySelected = shapes.selectedIndex();
-		for(int i=0; i<shapes.list().size(); i++) {
-			Shape s = shapes.get(i);
+		H_SIZE = (int) (H_SIZE/manager.zoom());
+		g2d.setStroke(new BasicStroke((float) (2/manager.zoom()))); // not necessary, but it looks better
+		int currentlySelected = manager.selectedIndex();
+		for(int i=0; i<manager.list().size(); i++) {
+			Shape s = manager.get(i);
 			boolean isSelected = ((currentlySelected == i) ? true : false);
 			AffineTransform oldXForm = g2d.getTransform();
-			double zoom = shapes.zoom();
+			double zoom = manager.zoom();
 			AffineTransform trans = 
 					new AffineTransform(zoom*Math.cos(s.rotation()),
 										zoom*Math.sin(s.rotation()),
 										-zoom*Math.sin(s.rotation()), 
 										zoom*Math.cos(s.rotation()),
-										zoom*(s.offset().x()-shapes.xscroll()),
-										zoom*(s.offset().y()-shapes.yscroll()));
+										zoom*(s.offset().x()-manager.xscroll()),
+										zoom*(s.offset().y()-manager.yscroll()));
 //			g2d.transform(trans);
 			g2d.setTransform(trans);
 			switch(s.getClass().getName()) {
@@ -67,6 +70,8 @@ public class View implements ViewRefresher {
 			g2d.setTransform(oldXForm);
 		}
 		drawSelected(g2d);
+		if(manager.showHouse)
+			render3d();
 	}
 	
 	private void drawRectangle(Graphics2D g2d, Rectangle rectangle, boolean isSelected) {
@@ -82,7 +87,7 @@ public class View implements ViewRefresher {
 		double h = 0;
 		double w = 0;
 //		Stroke oldStroke = g2d.getStroke();
-//		g2d.setStroke(new BasicStroke((int) (1/shapes.zoom())));
+//		g2d.setStroke(new BasicStroke((int) (1/manager.zoom())));
 		
 		switch(s.getClass().getName()) {
 		case "model.Rectangle": 
@@ -242,5 +247,54 @@ public class View implements ViewRefresher {
 		drawHandles(g2d, selectedShape);
 		g2d.setTransform(oldAT);
 	}
+	
+	public void render3d() {
+//        // Do your drawing here.
+//        glMatrixMode(GL_MODELVIEW);
+//        glLoadIdentity();
+//
+//        //world-to-camera transformation
+//        //transform the model according to where the camera currently is and where it's facing.
+//        glRotatef(-cam.rotation, 0, 1, 0);
+//        glTranslatef(-cam.x, -cam.y, -cam.z);
+//
+//        glBegin(GL_LINES);
+//        glColor3f(0, 0, 1); //make the model blue
+//        draw_house();
+//      
+//        glEnd();
+    }
+    
+//    public void draw_house() {
+//    	Iterator<Line3D> iter = model.getLines();
+//      	while(iter.hasNext()) {
+//	      	Line3D line = iter.next();
+//	      	glVertex3d(line.start.x, line.start.y, line.start.z);
+//	      	glVertex3d(line.end.x, line.end.y, line.end.z);
+//	    }   
+//    }
 
+	public void renderImage(Graphics2D g2d, AffineTransform at) {
+		AffineTransform oldXForm = g2d.getTransform();
+		g2d.setTransform(worldToView());
+		int w = manager.image.getWidth();
+		int h = manager.image.getHeight();
+		int[][] p = manager.image.getPixels();
+		BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
+		WritableRaster wr = bi.getRaster();
+		for (int row = 0; row < h; row++) {
+			for (int col = 0; col < w; col++) {
+				wr.setPixel(col, row, new int[]{p[row][col]});
+			}
+		}
+		g2d.drawImage(bi, 1024 - w/2, 1024 - h/2, w, h, null);
+		g2d.setTransform(oldXForm);
+	}
+	
+	public AffineTransform worldToView() {
+        AffineTransform transform = new AffineTransform();
+        transform.concatenate(new AffineTransform(new double[] { manager.zoom(), 0, 0, manager.zoom() }));
+        transform.concatenate(new AffineTransform(new double[] { 1, 0, 0, 1, -manager.xscroll(), -manager.yscroll() }));
+        return transform;
+	}
 }

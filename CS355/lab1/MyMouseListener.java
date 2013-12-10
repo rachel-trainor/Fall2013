@@ -6,15 +6,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
-import lab1.Shapes.Type;
+import lab1.Manager.Type;
 import model.*;
 
 import resources.GUIFunctions;
 
 public class MyMouseListener implements MouseListener, MouseMotionListener {
-	Shapes shapes;
+	Manager manager;
 	Shape newShape;
 	Point2D origin;
 	boolean moveShape = false;
@@ -23,11 +22,11 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	MatrixOps m = new MatrixOps();
 	
 	MyMouseListener() {
-		shapes = new Shapes();
+		manager = new Manager();
 	}
 	
-	MyMouseListener(Shapes s) {
-		shapes = s;
+	MyMouseListener(Manager s) {
+		manager = s;
 	}
 
 	@Override
@@ -41,11 +40,11 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		Color c = shapes.getColor();
+		Color c = manager.getColor();
 		Point2D worldP = viewToWorld(arg0.getPoint());
 		origin = worldP;
 		
-		switch(shapes.getType()) {
+		switch(manager.getType()) {
 		case RECTANGLE:
 			newShape = new Rectangle(c); newShape.setOffset(worldP.getX(), worldP.getY()); break;
 		case SQUARE:
@@ -65,7 +64,7 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 		case SELECT:
 			select(worldP); GUIFunctions.refresh(); break;
 		default:
-			System.out.println("something went wrong: " + shapes.getType()); break;
+			System.out.println("something went wrong: " + manager.getType()); break;
 		}
 	}
 
@@ -75,11 +74,11 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 		
 		if(newShape != null) {
 			Point2D objectP = worldToObject(worldP, newShape);
-			if(shapes.getType() == Type.TRIANGLE) {
+			if(manager.getType() == Type.TRIANGLE) {
 				makeTriangle((Triangle) newShape, objectP, true);
 			} else {
 				updateShape(newShape, objectP);
-				shapes.add(newShape);
+				manager.add(newShape);
 				GUIFunctions.refresh();
 				newShape = null;
 			}
@@ -90,17 +89,17 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	public void mouseDragged(MouseEvent e) {
 		Point2D worldP = viewToWorld(e.getPoint());
 		
-		if(shapes.getType() == Type.SELECT) {
-			if(moveShape && shapes.selected() != null) {
-				Point2D objectP = worldToObject(worldP, shapes.selected());
+		if(manager.getType() == Type.SELECT) {
+			if(moveShape && manager.selected() != null) {
+				Point2D objectP = worldToObject(worldP, manager.selected());
 				if(useHandle) {
-					updateShape(shapes.selected(), objectP);
+					updateShape(manager.selected(), objectP);
 				} else if(rotate) {
-					Shape s = shapes.selected();
+					Shape s = manager.selected();
 					Point2D translatedP = new Point2D.Double(worldP.getX()-s.offset().x(), worldP.getY()-s.offset().y());
 					rotateShape(s, translatedP);
 				} else {
-					shapes.selected().setOffset(worldP.getX(), worldP.getY());
+					manager.selected().setOffset(worldP.getX(), worldP.getY());
 				}
 				GUIFunctions.refresh();
 			}
@@ -109,20 +108,20 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 		
 		if(newShape != null) {
 			Point2D objectP = worldToObject(worldP, newShape);
-			if(shapes.getType() == Type.TRIANGLE) {
+			if(manager.getType() == Type.TRIANGLE) {
 				makeTriangle((Triangle) newShape, objectP, false);
 			} else {
 				updateShape(newShape, objectP);
-				shapes.add(newShape);
+				manager.add(newShape);
 				GUIFunctions.refresh();
-				shapes.removeLast();
+				manager.removeLast();
 			}
 		} 
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if(shapes.getType() == Type.TRIANGLE && newShape != null) {
+		if(manager.getType() == Type.TRIANGLE && newShape != null) {
 			Point2D worldP = viewToWorld(e.getPoint());
 			Point2D objectP = worldToObject(worldP, newShape);
 			makeTriangle((Triangle) newShape, objectP, false);
@@ -243,15 +242,15 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 				Line tmpLine = new Line(t.color());
 				tmpLine.setOffset(t.offset().x(), t.offset().y());
 				tmpLine.setP2(objectP);
-				shapes.add(tmpLine);
+				manager.add(tmpLine);
 				GUIFunctions.refresh();
-				shapes.removeLast();
+				manager.removeLast();
 			}
 		} else { // p2 is set
 			if(setNewPoint2D) {
 				t.setP3(objectP);
 				updateTriangleCenter(t);
-				shapes.add(t);
+				manager.add(t);
 				GUIFunctions.refresh();
 				newShape = null;
 			} else {
@@ -260,9 +259,9 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 				tmpTri.setP2(t.p2());
 				tmpTri.setP3(objectP);
 				updateTriangleCenter(tmpTri);
-				shapes.add(tmpTri);
+				manager.add(tmpTri);
 				GUIFunctions.refresh();
-				shapes.removeLast();
+				manager.removeLast();
 			}
 		}
 	}
@@ -297,34 +296,34 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public boolean foundShape(Point2D worldP) {
-		for(int i=shapes.size()-1; i >= 0; i--) {
-			Shape tmpShape = shapes.get(i);
+		for(int i=manager.size()-1; i >= 0; i--) {
+			Shape tmpShape = manager.get(i);
 			
 			Point2D objectP = worldToObject(worldP, tmpShape);
 			
 			if(tmpShape.PointInShape(objectP)) {
-				shapes.setSelected(tmpShape);
-				shapes.setColor(tmpShape.color());
+				manager.setSelected(tmpShape);
+				manager.setColor(tmpShape.color());
 				GUIFunctions.changeSelectedColor(tmpShape.color());
 				return true;
 			} else {
-				shapes.setSelected(null);
+				manager.setSelected(null);
 			}
 		}
 		return false;
 	}
 	
 	public boolean foundRotateHandle(Point2D worldP) {
-		if(shapes.selected() == null) { // I don't already have a selected shape
+		if(manager.selected() == null) { // I don't already have a selected shape
 			return false;
-		} else if(shapes.selected().getClass().getName() == "model.Circle") { // can't rotate circles
+		} else if(manager.selected().getClass().getName() == "model.Circle") { // can't rotate circles
 			return false;
-		} else if(shapes.selected().getClass().getName() == "model.Line") { // can't rotate lines
+		} else if(manager.selected().getClass().getName() == "model.Line") { // can't rotate lines
 			return false;
 		}
 		
-		Point2D objectP = worldToObject(worldP, shapes.selected());
-		Point2D rotationHandleCenter = shapes.selected().getRotationHandle();
+		Point2D objectP = worldToObject(worldP, manager.selected());
+		Point2D rotationHandleCenter = manager.selected().getRotationHandle();
 		if(Point2DInHandle(objectP, rotationHandleCenter)) {
 			return true;
 		}
@@ -332,14 +331,14 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public boolean foundHandle(Point2D worldP) {
-		if(shapes.selected() == null) { // I don't already have a selected shape
+		if(manager.selected() == null) { // I don't already have a selected shape
 			return false;
 		}
 		
-		Point2D objectP = worldToObject(worldP, shapes.selected());
+		Point2D objectP = worldToObject(worldP, manager.selected());
 		if(handleToUse(objectP) != null) {
 			// set the origin's coordinates in world space
-			origin = objectToWorld(objectP, shapes.selected());
+			origin = objectToWorld(objectP, manager.selected());
 			return true;
 		} else {
 			return false;
@@ -347,10 +346,10 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public Point2D handleToUse(Point2D objectP) {
-		if(shapes.selected() == null) {
+		if(manager.selected() == null) {
 			return null;
 		}
-		for(Point2D handleCenter : shapes.selected().getHandles()) {
+		for(Point2D handleCenter : manager.selected().getHandles()) {
 			if(Point2DInHandle(objectP, handleCenter)) {
 				return handleCenter;
 			}
@@ -359,7 +358,7 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public boolean Point2DInHandle(Point2D objectP, Point2D handleCenter) {
-		double radius = 8/shapes.zoom();
+		double radius = 8/manager.zoom();
 		double deltaX = objectP.getX() - handleCenter.getX();
 		double deltaY = objectP.getY() - handleCenter.getY();
 		if(Math.abs(deltaX) > radius || Math.abs(deltaY) > radius) {
@@ -398,22 +397,22 @@ public class MyMouseListener implements MouseListener, MouseMotionListener {
 	}
 	
 	public Point2D worldToView(Point2D worldP) {
-//		Point2D translatedP = new Point2D.Double(worldP.getX()+shapes.xscroll(), worldP.getY()+shapes.yscroll());
-//		Point2D scaledP = new Point2D.Double(translatedP.getX()*shapes.zoom(), translatedP.getY()*shapes.zoom());
+//		Point2D translatedP = new Point2D.Double(worldP.getX()+manager.xscroll(), worldP.getY()+manager.yscroll());
+//		Point2D scaledP = new Point2D.Double(translatedP.getX()*manager.zoom(), translatedP.getY()*manager.zoom());
 //		return scaledP;
 		
-		double[][] sFtP = m.dot(m.sF(shapes.zoom()), m.tCInv(shapes.xscroll(), shapes.yscroll()));
+		double[][] sFtP = m.dot(m.sF(manager.zoom()), m.tCInv(manager.xscroll(), manager.yscroll()));
 		AffineTransform at = new AffineTransform(sFtP[0][0], sFtP[1][0], sFtP[0][1], sFtP[1][1], sFtP[0][2], sFtP[1][2]);
 		Point2D viewP = new Point2D.Double();		
 		return at.transform(worldP, viewP);
 	}
 	
 	public Point2D viewToWorld(Point2D viewP) {
-//		Point2D scaledP = new Point2D.Double(viewP.getX()/shapes.zoom(), viewP.getY()/shapes.zoom());
-//		Point2D translatedP = new Point2D.Double(scaledP.getX()+shapes.xscroll(), scaledP.getY()+shapes.yscroll());
+//		Point2D scaledP = new Point2D.Double(viewP.getX()/manager.zoom(), viewP.getY()/manager.zoom());
+//		Point2D translatedP = new Point2D.Double(scaledP.getX()+manager.xscroll(), scaledP.getY()+manager.yscroll());
 //		return translatedP;
 		
-		double[][] tPsF = m.dot(m.tC(shapes.xscroll(), shapes.yscroll()), m.sFInv(shapes.zoom()));
+		double[][] tPsF = m.dot(m.tC(manager.xscroll(), manager.yscroll()), m.sFInv(manager.zoom()));
 		AffineTransform at = new AffineTransform(tPsF[0][0], tPsF[1][0], tPsF[0][1], tPsF[1][1], tPsF[0][2], tPsF[1][2]);
 		Point2D worldP = new Point2D.Double();		
 		return at.transform(viewP, worldP);

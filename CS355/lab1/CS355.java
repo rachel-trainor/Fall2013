@@ -18,9 +18,9 @@ public class CS355
      */
     public static void main(String[] args) 
     {
-    	Shapes s = new Shapes();
-    	MyMouseListener ml = new MyMouseListener(s);
-        GUIFunctions.createCS355Frame(new Controller(s), new View(s), ml, ml);
+    	Manager m = new Manager();
+    	MyMouseListener ml = new MyMouseListener(m);
+        GUIFunctions.createCS355Frame(new Controller(m), new View(m), ml, ml);
         GUIFunctions.refresh();
         GUIFunctions.changeSelectedColor(Color.WHITE);
         GUIFunctions.setHScrollBarMin(0);

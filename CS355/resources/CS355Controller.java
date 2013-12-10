@@ -5,6 +5,7 @@
 package resources;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.Iterator;
 
 /**
@@ -36,4 +37,20 @@ public interface CS355Controller
     public void toggle3DModelDisplay();
 
     public void keyPressed(Iterator<Integer> iterator);
+
+    public void doEdgeDetection();
+
+    public void doSharpen();
+
+    public void doMedianBlur();
+
+    public void doUniformBlur();
+
+    public void doChangeContrast(int contrastAmountNum);
+
+    public void doChangeBrightness(int brightnessAmountNum);
+
+    public void doLoadImage(BufferedImage openImage);
+
+    public void toggleBackgroundDisplay();
 }
