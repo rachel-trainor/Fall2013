@@ -1,7 +1,7 @@
 package lab1;
 
 public class VirtualCamera {
-	float x, y, z, rotation;
+	double x, y, z, rotation;
     VirtualCamera() {
     	x = 0;
     	y = 5;
@@ -34,4 +34,8 @@ public class VirtualCamera {
     	z = 20;
     	rotation = 0;
     }
+    double x() { return x; }
+    double y() { return y; }
+    double z() { return z; }
+    double rotation() { return rotation; }
 }

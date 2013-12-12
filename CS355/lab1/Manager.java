@@ -17,7 +17,6 @@ public class Manager {
 	private double zoom = 1.0;
 	private double xscroll = 0.0;
 	private double yscroll = 0.0;
-	boolean showHouse = false;
 	boolean showImage = false;
 	protected Image image;
 	
@@ -99,10 +98,6 @@ public class Manager {
 	
 	public void setYScroll(double y) {
 		yscroll = y;
-	}
-	
-	public void toggle3d() {
-		showHouse = !showHouse;
 	}
 	
 	public void toggleImage() {

@@ -47,4 +47,8 @@ public class HouseModel extends WireFrame
     {
         return lines.iterator();
     }
+    
+    public List<Line3D> lines() {
+    	return lines;
+    }
 }

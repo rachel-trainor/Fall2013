@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.*;
 
@@ -13,16 +14,19 @@ import resources.ViewRefresher;
 
 public class View implements ViewRefresher {
 	Manager manager;
+	ThreeDManager manager3d;
 	int H_SIZE = 16;
 	AffineTransform selectedShapeAT;
 	Shape selectedShape;
 	
 	View() {
 		manager = new Manager();
+		manager3d = new ThreeDManager();
 	}
 	
-	View(Manager m) {
+	View(Manager m, ThreeDManager threeD) {
 		manager = m;
+		manager3d = threeD;
 	}
 
 	@Override
@@ -70,8 +74,8 @@ public class View implements ViewRefresher {
 			g2d.setTransform(oldXForm);
 		}
 		drawSelected(g2d);
-		if(manager.showHouse)
-			render3d();
+		if(manager3d.showHouse())
+			render3d(g2d);
 	}
 	
 	private void drawRectangle(Graphics2D g2d, Rectangle rectangle, boolean isSelected) {
@@ -248,31 +252,18 @@ public class View implements ViewRefresher {
 		g2d.setTransform(oldAT);
 	}
 	
-	public void render3d() {
-//        // Do your drawing here.
-//        glMatrixMode(GL_MODELVIEW);
-//        glLoadIdentity();
-//
-//        //world-to-camera transformation
-//        //transform the model according to where the camera currently is and where it's facing.
-//        glRotatef(-cam.rotation, 0, 1, 0);
-//        glTranslatef(-cam.x, -cam.y, -cam.z);
-//
-//        glBegin(GL_LINES);
-//        glColor3f(0, 0, 1); //make the model blue
-//        draw_house();
-//      
-//        glEnd();
+	public void render3d(Graphics2D g2d) {
+        g2d.setTransform(worldToView());
+        
+		for (LWJGL.Line3D line3D : manager3d.houseLines()) {
+            double[][][] clipLine = manager3d.cameraToClip(manager3d.objectToCamera(line3D));
+            if (!manager3d.inFrustum(clipLine))
+            	continue;
+            Line2D line2D = manager3d.canonicalToScreen(manager3d.clipToCanonical(clipLine));
+            g2d.drawLine((int) line2D.getX1(), (int) line2D.getY1(), 
+            			 (int) line2D.getX2(), (int) line2D.getY2());
+		}
     }
-    
-//    public void draw_house() {
-//    	Iterator<Line3D> iter = model.getLines();
-//      	while(iter.hasNext()) {
-//	      	Line3D line = iter.next();
-//	      	glVertex3d(line.start.x, line.start.y, line.start.z);
-//	      	glVertex3d(line.end.x, line.end.y, line.end.z);
-//	    }   
-//    }
 
 	public void renderImage(Graphics2D g2d, AffineTransform at) {
 		AffineTransform oldXForm = g2d.getTransform();
@@ -289,6 +280,13 @@ public class View implements ViewRefresher {
 		}
 		g2d.drawImage(bi, 1024 - w/2, 1024 - h/2, w, h, null);
 		g2d.setTransform(oldXForm);
+	}
+	
+	public AffineTransform viewToWorld() {
+		AffineTransform transform = new AffineTransform();
+        transform.concatenate(new AffineTransform(new double[] {1, 0, 0, 1, manager.xscroll(), manager.yscroll()}));
+        transform.concatenate(new AffineTransform(new double[] {1/manager.zoom(), 0, 0, 1/manager.zoom()}));
+        return transform;
 	}
 	
 	public AffineTransform worldToView() {

@@ -1,9 +1,5 @@
 package lab1;
 
-import LWJGL.HouseModel;
-import LWJGL.Line3D;
-import LWJGL.WireFrame;
-
 import java.awt.Color;
 import java.awt.image.*;
 import java.util.Iterator;
@@ -15,24 +11,22 @@ import lab1.Manager.Type;
 
 public class Controller implements CS355Controller {
 	Manager manager;
+	ThreeDManager manager3d;
 	double maxZoom = 4.0;
 	double minZoom = 0.25;
-	private VirtualCamera cam = new VirtualCamera();
-	private WireFrame model = new HouseModel();
-	static int viewportW = 640;
-	static int viewportH = 480;
-	float fovy = 85;
-	float aspect = viewportW/viewportH;
-	float zNear = 0.1f;
-	float zFar = 500;
+	VirtualCamera cam;
 	
 	Controller() {
 		manager = new Manager();
+		manager3d = new ThreeDManager();
+		cam = manager3d.camera();
 		GUIFunctions.refresh();
 	}
 	
-	Controller(Manager m) {
+	Controller(Manager m, ThreeDManager threeD) {
 		manager = m;
+		manager3d = threeD; 
+		cam = manager3d.camera();
 	}
 
 	@Override
@@ -154,26 +148,28 @@ public class Controller implements CS355Controller {
 
 	@Override
 	public void toggle3DModelDisplay() {
-		manager.toggle3d();
+		manager3d.toggle3d();
+		GUIFunctions.refresh();
 	}
 
 	@Override
 	public void keyPressed(Iterator<Integer> iterator) {
-		if(!manager.showHouse) return;
+		if(!manager3d.showHouse()) return;
 		
 		int tmp = iterator.next();
 		char ch = (char) tmp;
 		switch (ch) {
 		case 'A': cam.left(); break;
 		case 'D': cam.right(); break;
-		case 'W': if(cam.z > -zFar) cam.forward(); break;
-		case 'S': if(cam.z < zFar) cam.backward(); break;
+		case 'W': if(cam.z > -manager3d.zFar()) cam.forward(); break;
+		case 'S': if(cam.z < manager3d.zFar()) cam.backward(); break;
 		case 'Q': cam.turnL(); break;
 		case 'E': cam.turnR(); break;
 		case 'R': cam.up(); break;
 		case 'F': cam.down(); break;
 		case 'H': cam.home(); break;
 		}
+		GUIFunctions.refresh();
 	}
 
 	@Override

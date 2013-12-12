@@ -19,8 +19,9 @@ public class CS355
     public static void main(String[] args) 
     {
     	Manager m = new Manager();
+    	ThreeDManager threeD = new ThreeDManager();
     	MyMouseListener ml = new MyMouseListener(m);
-        GUIFunctions.createCS355Frame(new Controller(m), new View(m), ml, ml);
+        GUIFunctions.createCS355Frame(new Controller(m, threeD), new View(m, threeD), ml, ml);
         GUIFunctions.refresh();
         GUIFunctions.changeSelectedColor(Color.WHITE);
         GUIFunctions.setHScrollBarMin(0);
